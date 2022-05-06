@@ -211,19 +211,19 @@ void enc28j60_init(uint8_t *macadr)
 	// Setup MAC
 	enc28j60_wcr(MACON1, MACON1_TXPAUS| // Enable flow control
 		MACON1_RXPAUS|MACON1_MARXEN); // Enable MAC Rx
-	enc28j60_wcr(MACON2, 0); // Clear reset
+	// enc28j60_wcr(MACON2, 0); // Clear reset
 	enc28j60_wcr(MACON3, MACON3_PADCFG0| // Enable padding,
 		MACON3_TXCRCEN|MACON3_FRMLNEN|MACON3_FULDPX); // Enable crc & frame len chk
 	enc28j60_wcr16(MAMXFL, ENC28J60_MAXFRAME);
 	enc28j60_wcr(MABBIPG, 0x15); // Set inter-frame gap
 	enc28j60_wcr(MAIPGL, 0x12);
 	enc28j60_wcr(MAIPGH, 0x0c);
-	enc28j60_wcr(MAADR5, macadr[0]); // Set MAC address
-	enc28j60_wcr(MAADR4, macadr[1]);
-	enc28j60_wcr(MAADR3, macadr[2]);
-	enc28j60_wcr(MAADR2, macadr[3]);
-	enc28j60_wcr(MAADR1, macadr[4]);
-	enc28j60_wcr(MAADR0, macadr[5]);
+	enc28j60_wcr(MAADR6, macadr[0]); // Set MAC address
+	enc28j60_wcr(MAADR5, macadr[1]);
+	enc28j60_wcr(MAADR4, macadr[2]);
+	enc28j60_wcr(MAADR3, macadr[3]);
+	enc28j60_wcr(MAADR2, macadr[4]);
+	enc28j60_wcr(MAADR1, macadr[5]);
 
 	// Setup PHY
 	enc28j60_write_phy(PHCON1, PHCON1_PDPXMD); // Force full-duplex mode

@@ -153,8 +153,8 @@ void enc28j60_write_phy(uint8_t adr, uint16_t data);
 #define EPMOH 				(0x15 | 0x20)
 
 // Wake-on-LAN interrupt registers
-#define EWOLIE 				(0x16 | 0x20)
-#define EWOLIR 				(0x17 | 0x20)
+// #define EWOLIE 				(0x16 | 0x20)   /*reserved rev. E*/
+// #define EWOLIR 				(0x17 | 0x20)   /*reserved rev. E*/
 
 // Receive filters mask
 #define ERXFCON 			(0x18 | 0x20)
@@ -165,7 +165,7 @@ void enc28j60_write_phy(uint8_t adr, uint16_t data);
 
 // MAC control registers
 #define MACON1 				(0x00 | 0x40 | 0x80)
-#define MACON2 				(0x01 | 0x40 | 0x80)
+// #define MACON2 				(0x01 | 0x40 | 0x80)    /*reserved rev. E*/
 #define MACON3 				(0x02 | 0x40 | 0x80)
 #define MACON4 				(0x03 | 0x40 | 0x80)
 
@@ -186,8 +186,8 @@ void enc28j60_write_phy(uint8_t adr, uint16_t data);
 #define MAMXFL				MAMXFLL
 
 // MAC-PHY support register
-#define MAPHSUP 			(0x0D | 0x40 | 0x80)
-#define MICON 				(0x11 | 0x40 | 0x80)
+// #define MAPHSUP 			(0x0D | 0x40 | 0x80)    /*reserved rev. E*/
+// #define MICON 			(0x11 | 0x40 | 0x80)    /*reserved rev. E*/
 
 // MII registers
 #define MICMD 				(0x12 | 0x40 | 0x80)
@@ -202,12 +202,12 @@ void enc28j60_write_phy(uint8_t adr, uint16_t data);
 #define MIRD				MIRDL
 
 // MAC Address
-#define MAADR1 				(0x00 | 0x60 | 0x80)
-#define MAADR0 				(0x01 | 0x60 | 0x80)
+#define MAADR5 				(0x00 | 0x60 | 0x80)
+#define MAADR6 				(0x01 | 0x60 | 0x80)
 #define MAADR3 				(0x02 | 0x60 | 0x80)
-#define MAADR2 				(0x03 | 0x60 | 0x80)
-#define MAADR5 				(0x04 | 0x60 | 0x80)
-#define MAADR4 				(0x05 | 0x60 | 0x80)
+#define MAADR4 				(0x03 | 0x60 | 0x80)
+#define MAADR1 				(0x04 | 0x60 | 0x80)
+#define MAADR2 				(0x05 | 0x60 | 0x80)
 
 // Built-in self-test
 #define EBSTSD 				(0x06 | 0x60)

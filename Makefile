@@ -27,7 +27,7 @@ ST_INFO = st-info
 CFLAGS  = -g -O0 -Wall
 CFLAGS += -T ./startup/STM32F103XB_FLASH.ld
 CFLAGS += -mlittle-endian -mthumb -mcpu=cortex-m3 -mthumb-interwork
-CFLAGS += -DSTM32F10X_MD
+CFLAGS += -DSTM32F103xB
 CFLAGS += -Wl,--gc-sections
 CFLAGS += -I.
 CFLAGS += -I ./cmsis/inc/

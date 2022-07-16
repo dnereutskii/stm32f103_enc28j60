@@ -3,7 +3,7 @@
 
 /******************************************************************************/
 /* Headers */
-#include "main.h"
+#define SYSCLOCK    72000000U   /*System clock*/
 
 // #define DWT_CONTROL *(volatile unsigned long *)0xE0001000
 // #define SCB_DEMCR   *(volatile unsigned long *)0xE000EDFC

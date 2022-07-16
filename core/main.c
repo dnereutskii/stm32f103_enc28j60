@@ -1,7 +1,6 @@
-#include <main.h>
-#include <stm32f1xx.h>
+#include "stm32f1xx.h"
 #include "delay.h"
-#include "enc28j60.h"
+#include "enc28j60_spi.h"
 
 #define ONE_MS      1000U       /*Delay milliseconds const*/
 #define ONE_US      1000000U    /*Delay microseconds const*/
@@ -31,13 +30,16 @@ int main()
     led_init();
     // systick_init(ONE_MS);
     dwt_init();
+    enc28j60_spi_init();
+    enc28j60_spi_enable();
     
     while(1)
     {
-        GPIOC->BSRR = GPIO_BSRR_BR13;//on led
-        delay_ms(1000);
-        GPIOC->BSRR = GPIO_BSRR_BS13;//off led
-        delay_ms(1000);
+        ENC28J60_WRITE_DATA(0x17);
+        // GPIOC->BSRR = GPIO_BSRR_BR13;//on led
+        // delay_ms(1000);
+        // GPIOC->BSRR = GPIO_BSRR_BS13;//off led
+        // delay_ms(1000);
     };
 
     return 0;
@@ -83,8 +85,8 @@ void clock_deinit()
 /*
  * SYSCLK is clocked by 72 MHz
  * AHB is clocked by 72 MHz
- * APB1 is clocke by 36 MHz
- * APB2 is clocke by 72 MHz
+ * APB1 is clocked by 36 MHz
+ * APB2 is clocked by 72 MHz
  */
 void clock_init()
 {

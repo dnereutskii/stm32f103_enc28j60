@@ -5,6 +5,7 @@
 SOURCES  = core/main.c
 SOURCES += cmsis/src/system_stm32f1xx.c
 SOURCES += core/enc28j60/enc28j60.c
+SOURCES += core/enc28j60/spi/enc28j60_spi.c
 
 
 # add startup file to build
@@ -24,7 +25,7 @@ ST_FLASH ?= ST-LINK_CLI
 ST_INFO = st-info
 
 # specify compiler flags
-CFLAGS  = -g -O0 -Wall
+CFLAGS  = -g -O3 -Wall
 CFLAGS += -T ./startup/STM32F103XB_FLASH.ld
 CFLAGS += -mlittle-endian -mthumb -mcpu=cortex-m3 -mthumb-interwork
 CFLAGS += -DSTM32F103xB
@@ -35,8 +36,9 @@ CFLAGS += -I ./cmsis/inc/
 CFLAGS += -I ./core
 # delay header
 CFLAGS += -I ./core/delay/
-# enc28j60 heder 
+# enc28j60 headers 
 CFLAGS += -I ./core/enc28j60/
+CFLAGS += -I ./core/enc28j60/spi
 
 
 OBJS = $(SOURCES:.c=.o)

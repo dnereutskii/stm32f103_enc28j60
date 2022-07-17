@@ -35,7 +35,7 @@ int main()
     
     while(1)
     {
-        ENC28J60_WRITE_DATA(0x17);
+        ENC28J60_WRITE_BYTE(0x17);
         // GPIOC->BSRR = GPIO_BSRR_BR13;//on led
         // delay_ms(1000);
         // GPIOC->BSRR = GPIO_BSRR_BS13;//off led

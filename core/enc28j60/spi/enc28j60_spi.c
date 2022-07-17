@@ -48,7 +48,7 @@ void enc28j60_spi_disable(void)
     SPI2->CR1 &= ~(SPI_CR1_SPE);
 }
 
-uint8_t enc28j60_spi_rw_data(uint8_t data)
+uint8_t enc28j60_spi_rw_byte(uint8_t data)
 {
     //wait for empty TX buffer
     while(!(SPI2->SR & SPI_SR_TXE)) {}

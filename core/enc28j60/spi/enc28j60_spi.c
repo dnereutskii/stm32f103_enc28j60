@@ -33,7 +33,7 @@ void enc28j60_spi_init(void)
     
     SPI2->CR2 = 0;
 
-    ENC28J60_CS_RELEASE();
+    ENC28J60_SPI_CS_RELEASE();
 }
 
 
@@ -48,21 +48,15 @@ void enc28j60_spi_disable(void)
     SPI2->CR1 &= ~(SPI_CR1_SPE);
 }
 
+
 uint8_t enc28j60_spi_rw_byte(uint8_t data)
 {
-    //wait for empty TX buffer
-    while(!(SPI2->SR & SPI_SR_TXE)) {}
-    //Chip Select on
-    ENC28J60_CS_TAKE();  
-     //send out data
-    SPI2->DR = data;  
-     //wait answer
-    while(!(SPI2->SR & SPI_SR_RXNE)) {}
-     //read our data
-    data = SPI2->DR;  
-    //Chip Select off
-    ENC28J60_CS_RELEASE();  
-     //return what we read
-    return data;  
+    while(!(SPI2->SR & SPI_SR_TXE)) {}/*wait for empty TX buffer*/
+    // ENC28J60_SPI_CS_SELECT();/*Chip Select on*/
+    SPI2->DR = data;/*send out data*/
+    while(!(SPI2->SR & SPI_SR_RXNE)) {}/*wait answer*/
+    data = SPI2->DR;/*read our data*/
+    // ENC28J60_SPI_CS_RELEASE();/*Chip Select off*/
+    return data;/*return what we read*/
 }
 

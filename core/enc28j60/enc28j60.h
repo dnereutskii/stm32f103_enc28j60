@@ -1,38 +1,5 @@
 #ifndef __ENC28J60_H
 #define __ENC28J60_H
-// #pragma once
-
-#include <stm32f1xx.h>
-// #define ENC28J60_SPI_DDR	DDRB
-// #define ENC28J60_SPI_PORT	GPIOB
-// #define ENC28J60_SPI_CS		(1<<PB4)
-// #define ENC28J60_SPI_MOSI	(1<<PB5)
-// #define ENC28J60_SPI_MISO	(1<<PB6)
-// #define ENC28J60_SPI_SCK	(1<<PB7)
-
-// Init ENC28J60
-void enc28j60_init(uint8_t *macadr);
-
-// Snd/Rcv packets
-void enc28j60_send_packet(uint8_t *data, uint16_t len);
-uint16_t enc28j60_recv_packet(uint8_t *buf, uint16_t buflen);
-
-// R/W control registers
-uint8_t enc28j60_rcr(uint8_t adr);
-void enc28j60_wcr(uint8_t adr, uint8_t arg);
-uint16_t enc28j60_rcr16(uint8_t adr);
-void enc28j60_wcr16(uint8_t adr, uint16_t arg);
-void enc28j60_bfc(uint8_t adr, uint8_t mask); // Clr bits (reg &= ~mask)
-void enc28j60_bfs(uint8_t adr, uint8_t mask); // Set bits (reg |= mask)
-
-// R/W Rx/Tx buffer
-void enc28j60_read_buffer(uint8_t *buf, uint16_t len);
-void enc28j60_write_buffer(uint8_t *buf, uint16_t len);
-
-// R/W PHY reg
-uint16_t enc28j60_read_phy(uint8_t adr);
-void enc28j60_write_phy(uint8_t adr, uint16_t data);
-
 
 #define ENC28J60_BUFSIZE	0x2000
 #define ENC28J60_RXSIZE		0x1A00
@@ -44,19 +11,24 @@ void enc28j60_write_phy(uint8_t adr, uint16_t data);
 #define ENC28J60_RXEND		(ENC28J60_RXSIZE-1)
 #define ENC28J60_TXSTART	ENC28J60_RXSIZE
 
-#define ENC28J60_SPI_RCR	0x00
-#define ENC28J60_SPI_RBM	0x3A
-#define ENC28J60_SPI_WCR	0x40
-#define ENC28J60_SPI_WBM	0x7A
-#define ENC28J60_SPI_BFS	0x80
-#define ENC28J60_SPI_BFC	0xA0
-#define ENC28J60_SPI_SC		0xFF
+#define ENC28J60_MII_MAC    0x80    /*MII and MAC register label*/
 
-#define ENC28J60_ADDR_MASK	0x1F
+/*
+ * SPI Instruction Set
+ */
+#define ENC28J60_SPI_RCR	0x00    /*Read Control Register*/
+#define ENC28J60_SPI_RBM	0x3A    /*Read Buffer Memory*/
+#define ENC28J60_SPI_WCR	0x40    /*Write Control Register*/
+#define ENC28J60_SPI_WBM	0x7A    /*Write Buffer Memory*/
+#define ENC28J60_SPI_BFS	0x80    /*Bit Field Set*/
+#define ENC28J60_SPI_BFC	0xA0    /*Bit Field Clear*/
+#define ENC28J60_SPI_SC		0xFF    /*Soft Reset*/
+
+#define ENC28J60_ADDR_MASK	0x1F    /*Mask for main register addresses*/
 #define ENC28J60_COMMON_CR	0x1B
 
 /*
- * Main registers
+ * Main registers Bank 0
  */
  
 #define EIE 				0x1B
@@ -126,7 +98,9 @@ void enc28j60_write_phy(uint8_t adr, uint16_t data);
 #define EDMACSH 			0x17
 #define EDMACS				EDMACSL
 
-
+/*
+ * Main registers Bank 1
+ */
 
 // Hash table registers 
 #define EHT0 				(0x00 | 0x20)
@@ -162,27 +136,30 @@ void enc28j60_write_phy(uint8_t adr, uint16_t data);
 // Packet counter
 #define EPKTCNT 			(0x19 | 0x20)
 
+/*
+ * Main registers Bank 2
+ */
 
 // MAC control registers
-#define MACON1 				(0x00 | 0x40 | 0x80)
+#define MACON1 				(0x00 | 0x40 | ENC28J60_MII_MAC)
 // #define MACON2 				(0x01 | 0x40 | 0x80)    /*reserved rev. E*/
-#define MACON3 				(0x02 | 0x40 | 0x80)
-#define MACON4 				(0x03 | 0x40 | 0x80)
+#define MACON3 				(0x02 | 0x40 | ENC28J60_MII_MAC)
+#define MACON4 				(0x03 | 0x40 | ENC28J60_MII_MAC)
 
 // MAC Back-to-back gap
-#define MABBIPG 			(0x04 | 0x40 | 0x80)
+#define MABBIPG 			(0x04 | 0x40 | ENC28J60_MII_MAC)
 
 // MAC Non back-to-back gap
-#define MAIPGL 				(0x06 | 0x40 | 0x80)
-#define MAIPGH 				(0x07 | 0x40 | 0x80)
+#define MAIPGL 				(0x06 | 0x40 | ENC28J60_MII_MAC)
+#define MAIPGH 				(0x07 | 0x40 | ENC28J60_MII_MAC)
 
 // Collision window & rexmit timer
-#define MACLCON1 			(0x08 | 0x40 | 0x80)
-#define MACLCON2 			(0x09 | 0x40 | 0x80)
+#define MACLCON1 			(0x08 | 0x40 | ENC28J60_MII_MAC)
+#define MACLCON2 			(0x09 | 0x40 | ENC28J60_MII_MAC)
 
 // Max frame length
-#define MAMXFLL 			(0x0A | 0x40 | 0x80)
-#define MAMXFLH 			(0x0B | 0x40 | 0x80)
+#define MAMXFLL 			(0x0A | 0x40 | ENC28J60_MII_MAC)
+#define MAMXFLH 			(0x0B | 0x40 | ENC28J60_MII_MAC)
 #define MAMXFL				MAMXFLL
 
 // MAC-PHY support register
@@ -190,31 +167,35 @@ void enc28j60_write_phy(uint8_t adr, uint16_t data);
 // #define MICON 			(0x11 | 0x40 | 0x80)    /*reserved rev. E*/
 
 // MII registers
-#define MICMD 				(0x12 | 0x40 | 0x80)
-#define MIREGADR 			(0x14 | 0x40 | 0x80)
+#define MICMD 				(0x12 | 0x40 | ENC28J60_MII_MAC)
+#define MIREGADR 			(0x14 | 0x40 | ENC28J60_MII_MAC)
 
-#define MIWRL 				(0x16 | 0x40 | 0x80)
-#define MIWRH 				(0x17 | 0x40 | 0x80)
+#define MIWRL 				(0x16 | 0x40 | ENC28J60_MII_MAC)
+#define MIWRH 				(0x17 | 0x40 | ENC28J60_MII_MAC)
 #define MIWR				MIWRL
 
-#define MIRDL 				(0x18 | 0x40 | 0x80)
-#define MIRDH 				(0x19 | 0x40 | 0x80)
+#define MIRDL 				(0x18 | 0x40 | ENC28J60_MII_MAC)
+#define MIRDH 				(0x19 | 0x40 | ENC28J60_MII_MAC)
 #define MIRD				MIRDL
 
+/*
+ * Main registers Bank 3
+ */
+
 // MAC Address
-#define MAADR5 				(0x00 | 0x60 | 0x80)
-#define MAADR6 				(0x01 | 0x60 | 0x80)
-#define MAADR3 				(0x02 | 0x60 | 0x80)
-#define MAADR4 				(0x03 | 0x60 | 0x80)
-#define MAADR1 				(0x04 | 0x60 | 0x80)
-#define MAADR2 				(0x05 | 0x60 | 0x80)
+#define MAADR5 				(0x00 | 0x60 | ENC28J60_MII_MAC)
+#define MAADR6 				(0x01 | 0x60 | ENC28J60_MII_MAC)
+#define MAADR3 				(0x02 | 0x60 | ENC28J60_MII_MAC)
+#define MAADR4 				(0x03 | 0x60 | ENC28J60_MII_MAC)
+#define MAADR1 				(0x04 | 0x60 | ENC28J60_MII_MAC)
+#define MAADR2 				(0x05 | 0x60 | ENC28J60_MII_MAC)
 
 // Built-in self-test
 #define EBSTSD 				(0x06 | 0x60)
 #define EBSTCON 			(0x07 | 0x60)
 #define EBSTCSL 			(0x08 | 0x60)
 #define EBSTCSH 			(0x09 | 0x60)
-#define MISTAT 				(0x0A | 0x60 | 0x80)
+#define MISTAT 				(0x0A | 0x60 | ENC28J60_MII_MAC)
 
 // Revision ID
 #define EREVID 				(0x12 | 0x60)
@@ -226,6 +207,8 @@ void enc28j60_write_phy(uint8_t adr, uint16_t data);
 #define EFLOCON 			(0x17 | 0x60)
 #define EPAUSL 				(0x18 | 0x60)
 #define EPAUSH 				(0x19 | 0x60)
+
+
 
 // PHY registers
 #define PHCON1 				0x00
@@ -422,5 +405,28 @@ void enc28j60_write_phy(uint8_t adr, uint16_t data);
 #define PHLCON_LFRQ1		0x0008
 #define PHLCON_LFRQ0		0x0004
 #define PHLCON_STRCH		0x0002
+
+// Init ENC28J60
+void enc28j60_init(uint8_t *macadr);
+
+// Snd/Rcv packets
+void enc28j60_send_packet(uint8_t *data, uint16_t len);
+uint16_t enc28j60_recv_packet(uint8_t *buf, uint16_t buflen);
+
+// R/W control registers
+uint8_t enc28j60_rcr(uint8_t adr);
+void enc28j60_wcr(uint8_t adr, uint8_t arg);
+uint16_t enc28j60_rcr16(uint8_t adr);
+void enc28j60_wcr16(uint8_t adr, uint16_t arg);
+void enc28j60_bfc(uint8_t adr, uint8_t mask); // Clr bits (reg &= ~mask)
+void enc28j60_bfs(uint8_t adr, uint8_t mask); // Set bits (reg |= mask)
+
+// R/W Rx/Tx buffer
+void enc28j60_read_buffer(uint8_t *buf, uint16_t len);
+void enc28j60_write_buffer(uint8_t *buf, uint16_t len);
+
+// R/W PHY reg
+uint16_t enc28j60_read_phy(uint8_t adr);
+void enc28j60_write_phy(uint8_t adr, uint16_t data);
 
 #endif /*__ENC28J60_H*/

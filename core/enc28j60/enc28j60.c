@@ -1,52 +1,50 @@
+#include "stm32f1xx.h"
+#include "enc28j60_spi.h"
 #include "enc28j60.h"
-#include <stm32f1xx.h>
+
+static uint8_t enc28j60_current_bank = 0;
+static uint16_t enc28j60_rxrdpt = 0;
 
 
-/*
- * SPI
- */
-
-uint8_t enc28j60_current_bank = 0;
-uint16_t enc28j60_rxrdpt = 0;
-
-#define enc28j60_select()	GPIOB->BSRR = GPIO_BSRR_BR12
-#define enc28j60_release()	GPIOB->BSRR = GPIO_BSRR_BS12
-
-uint8_t enc28j60_rxtx(uint8_t data)
-{
-    while(!(SPI2->SR & SPI_SR_TXE)){}	/*wait for empty Tx buffer*/
-	enc28j60_select();	/*activate Chip Select*/
-    SPI2->DR = data;	/*sent data*/ 
-    while(!(SPI2->SR & SPI_SR_RXNE)){}	/*wait for answer*/
-    data = SPI2->DR;	/*read data*/  
-	enc28j60_release();	/*deactivate Chip Select*/   
-    return data;		/*return data*/
-}
-
-#define enc28j60_rx() enc28j60_rxtx(0xff)
-#define enc28j60_tx(data) enc28j60_rxtx(data)
-
-// Generic SPI read command
-uint8_t enc28j60_read_op(uint8_t cmd, uint8_t adr)
+/**
+  * @brief: Generic SPI read command
+  *
+  * @param cmd: Read Control Register command
+  * @param adr: main registers
+  * 
+  * @retval data from a main register	
+  */
+static uint8_t enc28j60_read_op(uint8_t cmd, uint8_t adr)
 {
 	uint8_t data;
 
-	enc28j60_select();
-	enc28j60_tx(cmd | (adr & ENC28J60_ADDR_MASK));
-	if(adr & 0x80) // throw out dummy byte 
-		enc28j60_rx(); // when reading MII/MAC register
-	data = enc28j60_rx();
-	enc28j60_release();
+	ENC28J60_SPI_CS_SELECT();
+	ENC28J60_SPI_WRITE_BYTE(cmd | (adr & ENC28J60_ADDR_MASK));
+	if (adr & ENC28J60_MII_MAC)/*throw dummy byte out*/
+	{ 
+		ENC28J60_SPI_READ_BYTE();/*when reading MII/MAC register*/
+	}
+	data = ENC28J60_SPI_READ_BYTE();
+	ENC28J60_SPI_CS_RELEASE();
 	return data;
 }
 
-// Generic SPI write command
-void enc28j60_write_op(uint8_t cmd, uint8_t adr, uint8_t data)
+
+/**
+  * @brief Generic SPI write command
+  *
+  * @param cmd  Write Control Register command
+  * @param adr  main register
+  * @param data data to be written to a main register
+  * 
+  * @retval None	
+  */
+static void enc28j60_write_op(uint8_t cmd, uint8_t adr, uint8_t data)
 {
-	enc28j60_select();
-	enc28j60_tx(cmd | (adr & ENC28J60_ADDR_MASK));
-	enc28j60_tx(data);
-	enc28j60_release();
+	ENC28J60_SPI_CS_SELECT();
+	ENC28J60_SPI_WRITE_BYTE(cmd | (adr & ENC28J60_ADDR_MASK));
+	ENC28J60_SPI_WRITE_BYTE(data);
+	ENC28J60_SPI_CS_RELEASE();
 }
 
 // Initiate software reset
@@ -57,7 +55,7 @@ void enc28j60_soft_reset()
 	enc28j60_release();
 	
 	enc28j60_current_bank = 0;
-	// _delay_ms(1); // Wait until device initializes
+
 	for(uint32_t i = 0; i < 1000000; i++){}
 }
 
@@ -132,8 +130,10 @@ void enc28j60_read_buffer(uint8_t *buf, uint16_t len)
 {
 	enc28j60_select();
 	enc28j60_tx(ENC28J60_SPI_RBM);
-	while(len--)
+	while (len--)
+	{
 		*(buf++) = enc28j60_rx();
+	}
 	enc28j60_release();
 }
 

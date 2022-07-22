@@ -35,7 +35,7 @@ int main()
     
     while(1)
     {
-        ENC28J60_WRITE_BYTE(0x17);
+        // ENC28J60_WRITE_BYTE(0x17);
         // GPIOC->BSRR = GPIO_BSRR_BR13;//on led
         // delay_ms(1000);
         // GPIOC->BSRR = GPIO_BSRR_BS13;//off led
@@ -90,34 +90,22 @@ void clock_deinit()
  */
 void clock_init()
 {
-    /*set HSE to enable*/
     RCC->CR |= RCC_CR_HSEON;            /*enable HSE clock*/
-    /*wait for HSE ready flag*/
-    while(!(RCC->CR&RCC_CR_HSERDY)){}   /*wait for HSE ready flag*/
-    /*Flash*/
+    while (!(RCC->CR&RCC_CR_HSERDY)){}   /*wait for HSE ready flag*/
     FLASH->ACR |= FLASH_ACR_PRFTBE;     /*enable prefetch buffer*/
     FLASH->ACR |= FLASH_ACR_LATENCY_1;  /*max delay for flash access when max clock frequency*/
-    /*set PLLMUL to 9*/
     RCC->CFGR |= RCC_CFGR_PLLMULL9;      /*PLL multiplication factor is 9*/
-    /*switch MUX PLLXTPRE to HSE without devider*/
     RCC->CFGR &= ~RCC_CFGR_PLLXTPRE;     /*HSE is not devided for PLL*/
-    /*switch PLLSCR to HSE*/
     RCC->CFGR |= RCC_CFGR_PLLSRC;       /*clock from HSE selected as PLL input clock*/
-    /*other mulls*/
     RCC->CFGR &= ~RCC_CFGR_HPRE;        /*SYSCLK is not devided for HCLK (AHB)*/
     RCC->CFGR |= RCC_CFGR_PPRE1_DIV2;   /*HCLK is devided by 2 for APB1 (36 MHz max)*/
     RCC->CFGR &= ~RCC_CFGR_PPRE2;       /*HCLK is not devided for APB2 (72 MHz max)*/
-    /*enable CSS -> set CSSON*/
-    RCC->CR |= RCC_CR_CSSON;
-    /*enable PLL*/
-    RCC->CR |= RCC_CR_PLLON;
-    /*wait for PLL ready flag*/
-    while(!(RCC->CR&RCC_CR_PLLRDY)){}
-    /*switch SW MUX to PLLCLK for SYSCLK*/
+    RCC->CR |= RCC_CR_CSSON;/*enable CSS -> set CSSON*/
+    RCC->CR |= RCC_CR_PLLON;/*enable PLL*/
+    while (!(RCC->CR&RCC_CR_PLLRDY)){}/*wait for PLL ready flag*/
     RCC->CFGR |= RCC_CFGR_SW_PLL;       /*PLL is used as sys clock*/
-    /*wait for PLL as SYSCLK flag*/ 
-    while(!(RCC->CFGR&\
-    RCC_CFGR_SWS_PLL)){}                /*wait for PLL as SYSCLK clock flag*/
+    while (!(RCC->CFGR&RCC_CFGR_SWS_PLL)){}/*wait for PLL as SYSCLK clock flag*/
+    SystemCoreClockUpdate();
 }
 
 

@@ -9,8 +9,9 @@ static uint16_t enc28j60_rxrdpt = 0;
 /**
   * @brief: Generic SPI read command
   *
-  * @param cmd: Read Control Register command
-  * @param adr: main registers
+  * @param cmd: SPI commandS:
+  *				ENC28J60_SPI_RCR
+  * @param adr: Main registers
   * 
   * @retval data from a main register	
   */
@@ -33,9 +34,12 @@ static uint8_t enc28j60_read_op(uint8_t cmd, uint8_t adr)
 /**
   * @brief Generic SPI write command
   *
-  * @param cmd  Write Control Register command
-  * @param adr  main register
-  * @param data data to be written to a main register
+  * @param cmd  SPI Commands:
+  *				ENC28J60_SPI_BFC
+  *				ENC28J60_SPI_BFS
+  *				ENC28J60_SPI_WCR
+  * @param adr  Main register address
+  * @param data Data to be written to a main register
   * 
   * @retval None	
   */
@@ -64,14 +68,21 @@ void enc28j60_soft_reset()
  * Memory access
  */
 
-// Set register bank
+
+/**
+  * @brief Set register bank by extracting it from main register address 
+  *
+  * @param adr  Main register address
+  * 
+  * @retval None	
+  */
 void enc28j60_set_bank(uint8_t adr)
 {
 	uint8_t bank;
 
 	if( (adr & ENC28J60_ADDR_MASK) < ENC28J60_COMMON_CR )
 	{
-		bank = (adr >> 5) & 0x03; //BSEL1|BSEL0=0x03
+		bank = (adr >> 5) & ENC28J60_BANK_SEL_MASK;
 		if(bank != enc28j60_current_bank)
 		{
 			enc28j60_write_op(ENC28J60_SPI_BFC, ECON1, 0x03);
@@ -81,12 +92,20 @@ void enc28j60_set_bank(uint8_t adr)
 	}
 }
 
-// Read register
+
+/**
+  * @brief Read Control Register function
+  *
+  * @param adr Main register address
+  * 
+  * @retval Main register value	
+  */
 uint8_t enc28j60_rcr(uint8_t adr)
 {
 	enc28j60_set_bank(adr);
 	return enc28j60_read_op(ENC28J60_SPI_RCR, adr);
 }
+
 
 // Read register pair
 uint16_t enc28j60_rcr16(uint8_t adr)
@@ -164,35 +183,10 @@ void enc28j60_write_phy(uint8_t adr, uint16_t data)
 	while(enc28j60_rcr(MISTAT) & MISTAT_BUSY){}
 }
 
-static void enc28j60_init_spi(void)
-{
-	/*GPIO setting*/
-	SET_BIT(RCC->APB2ENR, RCC_APB2ENR_IOPBEN); 	/*PORTB clock enabling*/
-	SET_BIT(RCC->APB2ENR, RCC_APB2ENR_AFIOEN);	/*AFIO clock enabling*/
-	/*CS pin*/
-	MODIFY_REG(GPIOB->CRH, GPIO_CRH_MODE12_Msk, GPIO_CRH_MODE12);	/*50MHz output mode*/
-	MODIFY_REG(GPIOB->CRH, GPIO_CRH_CNF12_Msk, ~GPIO_CRH_CNF12);	/*General push-pull*/	
-	/*SCK pin*/
-	MODIFY_REG(GPIOB->CRH, GPIO_CRH_MODE13_Msk, GPIO_CRH_MODE13);	/*50MHz output mode*/
-	MODIFY_REG(GPIOB->CRH, GPIO_CRH_CNF13_Msk, GPIO_CRH_CNF13_1);	/*AF push-pull*/
-	/*MISO pin*/
-	MODIFY_REG(GPIOB->CRH, GPIO_CRH_MODE14_Msk, ~GPIO_CRH_MODE14);	/*input mode*/
-	MODIFY_REG(GPIOB->CRH, GPIO_CRH_CNF14_Msk, GPIO_CRH_MODE14_0);	/*Input floating*/	
-	/*MOSI pin*/
-	MODIFY_REG(GPIOB->CRH, GPIO_CRH_MODE15_Msk, GPIO_CRH_MODE15);	/*50MHz output mode*/
-	MODIFY_REG(GPIOB->CRH, GPIO_CRH_CNF15_Msk, GPIO_CRH_CNF15_1);	/*AF push-pull*/
-
-	/*SPI setting*/
-	SET_BIT(RCC->APB1ENR, RCC_APB1ENR_SPI2EN);	/*SPI2 clock enabling*/
-	/*CR1 setting*/
-	SET_BIT(SPI2->CR1, SPI_CR1_MSTR|SPI_CR1_SPE);
-	/*CR2 setting*/
-}
 
 /*
  * Init & packet Rx/Tx
  */
-
 void enc28j60_init(uint8_t *macadr)
 {
 	// Initialize SPI

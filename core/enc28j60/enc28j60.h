@@ -25,6 +25,7 @@
 #define ENC28J60_SPI_SC		0xFF    /*Soft Reset*/
 
 #define ENC28J60_ADDR_MASK	0x1F    /*Mask for main register addresses*/
+#define ENC28J60_BANK_MASK  0x03    /*Bank select mask: BSEL1|BSEL0*/
 #define ENC28J60_COMMON_CR	0x1B
 
 /*

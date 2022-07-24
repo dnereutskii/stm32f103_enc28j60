@@ -22,7 +22,7 @@
 #define ENC28J60_SPI_WBM	0x7A    /*Write Buffer Memory*/
 #define ENC28J60_SPI_BFS	0x80    /*Bit Field Set*/
 #define ENC28J60_SPI_BFC	0xA0    /*Bit Field Clear*/
-#define ENC28J60_SPI_SC		0xFF    /*Soft Reset*/
+#define ENC28J60_SPI_SRC	0xFF    /*System Reset Command*/
 
 #define ENC28J60_ADDR_MASK	0x1F    /*Mask for main register addresses*/
 #define ENC28J60_BANK_MASK  0x03    /*Bank select mask: BSEL1|BSEL0*/

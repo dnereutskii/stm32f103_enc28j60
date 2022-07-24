@@ -54,9 +54,9 @@ static void enc28j60_write_op(uint8_t cmd, uint8_t adr, uint8_t data)
 // Initiate software reset
 void enc28j60_soft_reset()
 {
-	enc28j60_select();
-	enc28j60_tx(ENC28J60_SPI_SC);
-	enc28j60_release();
+	ENC28J60_SPI_CS_SELECT();
+	ENC28J60_SPI_WRITE_BYTE(ENC28J60_SPI_SRC);
+	ENC28J60_SPI_CS_RELEASE();
 	
 	enc28j60_current_bank = 0;
 
@@ -94,7 +94,7 @@ void enc28j60_set_bank(uint8_t adr)
 
 
 /**
-  * @brief Read Control Register function
+  * @brief Read Control Register
   *
   * @param adr Main register address
   * 
@@ -107,62 +107,123 @@ uint8_t enc28j60_rcr(uint8_t adr)
 }
 
 
-// Read register pair
+/**
+  * @brief Read register pair
+  *
+  * @param adr Main register address
+  * 
+  * @retval Main register value	
+  */
 uint16_t enc28j60_rcr16(uint8_t adr)
 {
-	enc28j60_set_bank(adr);
-	return enc28j60_read_op(ENC28J60_SPI_RCR, adr) |
-		(enc28j60_read_op(ENC28J60_SPI_RCR, adr+1) << 8);
+    enc28j60_set_bank(adr);
+    return enc28j60_read_op(ENC28J60_SPI_RCR, adr) |
+        (enc28j60_read_op(ENC28J60_SPI_RCR, adr + 1) << 8);
 }
 
-// Write register
+
+/**
+  * @brief Write register
+  *
+  * @param adr Main register address
+  * @param arg Data to be written
+  * 
+  * @retval None
+  */
 void enc28j60_wcr(uint8_t adr, uint8_t arg)
 {
 	enc28j60_set_bank(adr);
 	enc28j60_write_op(ENC28J60_SPI_WCR, adr, arg);
 }
 
-// Write register pair
+
+/**
+  * @brief Write register pair
+  *
+  * @param adr Main register address
+  * @param arg Data to be written
+  * 
+  * @retval None
+  */
 void enc28j60_wcr16(uint8_t adr, uint16_t arg)
 {
 	enc28j60_set_bank(adr);
 	enc28j60_write_op(ENC28J60_SPI_WCR, adr, arg);
-	enc28j60_write_op(ENC28J60_SPI_WCR, adr+1, arg>>8);
+	enc28j60_write_op(ENC28J60_SPI_WCR, adr + 1, arg >> 8);
 }
 
-// Clear bits in register (reg &= ~mask)
+
+/**
+  * @brief Clear bits in ETH control register (reg &= ~mask)
+  *
+  * @param adr ETH register address
+  * @param mask Bit mask
+  * 
+  * @retval None
+  */
 void enc28j60_bfc(uint8_t adr, uint8_t mask)
 {
 	enc28j60_set_bank(adr);
 	enc28j60_write_op(ENC28J60_SPI_BFC, adr, mask);
 }
 
-// Set bits in register (reg |= mask)
+ 
+/**
+  * @brief Set bits in register (reg |= mask)
+  *
+  * @param adr ETH register address
+  * @param mask Bit mask
+  * 
+  * @retval None
+  */
 void enc28j60_bfs(uint8_t adr, uint8_t mask)
 {
 	enc28j60_set_bank(adr);
 	enc28j60_write_op(ENC28J60_SPI_BFS, adr, mask);
 }
 
-// Read Rx/Tx buffer (at ERDPT)
+
+/**
+  * @brief Read Rx/Tx buffer (at ERDPT)
+  *
+  * @param buf User buffer to be filled 
+  * @param len Data length
+  * 
+  * @retval None
+  */
 void enc28j60_read_buffer(uint8_t *buf, uint16_t len)
 {
-	enc28j60_select();
-	enc28j60_tx(ENC28J60_SPI_RBM);
-	while (len--)
+	ENC28J60_SPI_CS_SELECT();
+	ENC28J60_SPI_WRITE_BYTE(ENC28J60_SPI_RBM);
+	while (len)
 	{
-		*(buf++) = enc28j60_rx();
+        *buf = ENC28J60_SPI_READ_BYTE();
+        buf++;
+        len--;
 	}
-	enc28j60_release();
+	ENC28J60_SPI_CS_RELEASE();
 }
 
-// Write Rx/Tx buffer (at EWRPT)
+
+/**
+  * @brief Write Rx/Tx buffer (at EWRPT)
+  *
+  * @param buf User buffer to be filled 
+  * @param len Data length
+  * 
+  * @retval None
+  */
 void enc28j60_write_buffer(uint8_t *buf, uint16_t len)
 {
-	enc28j60_select();
-	enc28j60_tx(ENC28J60_SPI_WBM);
-	while(len--){enc28j60_tx(*(buf++));}
-	enc28j60_release();
+    ENC28J60_SPI_CS_SELECT();
+    ENC28J60_SPI_WRITE_BYTE(ENC28J60_SPI_WBM);
+	while (len)
+    {
+        ENC28J60_SPI_WRITE_BYTE(*buf);
+        buf++;
+        len--;
+    }
+    ENC28J60_SPI_CS_RELEASE();
 }
 
 // Read PHY register

@@ -60,7 +60,7 @@ void enc28j60_soft_reset()
 	
 	enc28j60_current_bank = 0;
 
-	for(uint32_t i = 0; i < 1000000; i++){}
+	for (uint32_t i = 0; i < 1000000; i++){}
 }
 
 
@@ -148,8 +148,8 @@ void enc28j60_wcr(uint8_t adr, uint8_t arg)
 void enc28j60_wcr16(uint8_t adr, uint16_t arg)
 {
 	enc28j60_set_bank(adr);
-	enc28j60_write_op(ENC28J60_SPI_WCR, adr, arg);
-	enc28j60_write_op(ENC28J60_SPI_WCR, adr + 1, arg >> 8);
+	enc28j60_write_op(ENC28J60_SPI_WCR, adr, (uint8_t) arg);
+	enc28j60_write_op(ENC28J60_SPI_WCR, adr + 1, (uint8_t) (arg >> 8));
 }
 
 
@@ -180,6 +180,42 @@ void enc28j60_bfs(uint8_t adr, uint8_t mask)
 {
 	enc28j60_set_bank(adr);
 	enc28j60_write_op(ENC28J60_SPI_BFS, adr, mask);
+}
+
+
+/**
+  * @brief Clear bits in MII or MAC registers (reg &= ~mask)
+  *
+  * @param adr MAC or MII register address
+  * @param mask Bit mask
+  * 
+  * @retval None
+  */
+void enc28j60_bfc_mac_mii(uint8_t adr, uint8_t mask)
+{
+    uint8_t data;
+	enc28j60_set_bank(adr);
+    data = enc28j60_read_op(ENC28J60_SPI_RCR, adr);
+    data &= ~mask;
+	enc28j60_write_op(ENC28J60_SPI_WCR, adr, data);
+}
+
+
+/**
+  * @brief Set bits in MII or MAC registers (reg |= mask)
+  *
+  * @param adr MAC or MII register address
+  * @param mask Bit mask
+  * 
+  * @retval None
+  */
+void enc28j60_bfs_mac_mii(uint8_t adr, uint8_t mask)
+{
+    uint8_t data;
+	enc28j60_set_bank(adr);
+    data = enc28j60_read_op(ENC28J60_SPI_RCR, adr);
+    data |= mask;
+	enc28j60_write_op(ENC28J60_SPI_WCR, adr, data);
 }
 
 
@@ -226,22 +262,39 @@ void enc28j60_write_buffer(uint8_t *buf, uint16_t len)
     ENC28J60_SPI_CS_RELEASE();
 }
 
-// Read PHY register
+
+/**
+  * @brief Read PHY register
+  *
+  * @param adr PHY address
+  * 
+  * @retval PHY register value
+  */
 uint16_t enc28j60_read_phy(uint8_t adr)
 {
 	enc28j60_wcr(MIREGADR, adr);
-	enc28j60_bfs(MICMD, MICMD_MIIRD);
-	while(enc28j60_rcr(MISTAT) & MISTAT_BUSY){}
-	enc28j60_bfc(MICMD, MICMD_MIIRD);
+	/*enc28j60_bfs(MICMD, MICMD_MIIRD);/*warning: p29 sub 4.2.5 of datasheet*/
+    enc28j60_bfs_mac_mii(MICMD, MICMD_MIIRD);
+	while (enc28j60_rcr(MISTAT) & MISTAT_BUSY){}
+	/*enc28j60_bfc(MICMD, MICMD_MIIRD);/*warning: p29 sub 4.2.5 of datasheet*/
+	enc28j60_bfc_mac_mii(MICMD, MICMD_MIIRD);
 	return enc28j60_rcr16(MIRD);
 }
 
-// Write PHY register
+
+/**
+  * @brief Write PHY register
+  *
+  * @param adr  PHY address
+  * @param data Data to be written
+  * 
+  * @retval None
+  */
 void enc28j60_write_phy(uint8_t adr, uint16_t data)
 {
-	enc28j60_wcr(MIREGADR, adr);
-	enc28j60_wcr16(MIWR, data);
-	while(enc28j60_rcr(MISTAT) & MISTAT_BUSY){}
+    enc28j60_wcr(MIREGADR, adr);
+    enc28j60_wcr16(MIWR, data);
+    while (enc28j60_rcr(MISTAT) & MISTAT_BUSY){}
 }
 
 
@@ -250,25 +303,29 @@ void enc28j60_write_phy(uint8_t adr, uint16_t data)
  */
 void enc28j60_init(uint8_t *macadr)
 {
-	// Initialize SPI
-	enc28j60_init_spi();
-	enc28j60_release();
+	enc28j60_spi_init();/*Initialize SPI*/
+	enc28j60_soft_reset();/*Reset ENC28J60*/
 
-	// Reset ENC28J60
-	enc28j60_soft_reset();
-
-	// Setup Rx/Tx buffer
+	/*Setup Rx/Tx buffer*/
 	enc28j60_wcr16(ERXST, ENC28J60_RXSTART);
 	enc28j60_wcr16(ERXRDPT, ENC28J60_RXSTART);
 	enc28j60_wcr16(ERXND, ENC28J60_RXEND);
 	enc28j60_rxrdpt = ENC28J60_RXSTART;
 
-	// Setup MAC
-	enc28j60_wcr(MACON1, MACON1_TXPAUS| // Enable flow control
-		MACON1_RXPAUS|MACON1_MARXEN); // Enable MAC Rx
-	// enc28j60_wcr(MACON2, 0); // Clear reset
-	enc28j60_wcr(MACON3, MACON3_PADCFG0| // Enable padding,
-		MACON3_TXCRCEN|MACON3_FRMLNEN|MACON3_FULDPX); // Enable crc & frame len chk
+	/*Setup MAC*/
+	enc28j60_wcr(MACON1, 
+                 MACON1_TXPAUS |  /*Enable flow control*/
+		         MACON1_RXPAUS |
+                 MACON1_MARXEN    /*Enable MAC Rx*/
+    ); 
+	// enc28j60_wcr(MACON2, 0); /*Clear reset /*reserved rev. E*/
+	enc28j60_wcr(MACON3, 
+                 MACON3_PADCFG0 |   /*Padding to 60 bytes and CRC*/
+		         MACON3_TXCRCEN |   /*MAC will append a valid CRC*/
+                 MACON3_FRMLNEN |   /*Type/length field will be checked*/
+                 MACON3_FULDPX      /*Full-Duplex mode PDPXMD bit must also be set*/
+    ); 
+
 	enc28j60_wcr16(MAMXFL, ENC28J60_MAXFRAME);
 	enc28j60_wcr(MABBIPG, 0x15); // Set inter-frame gap
 	enc28j60_wcr(MAIPGL, 0x12);
@@ -283,13 +340,19 @@ void enc28j60_init(uint8_t *macadr)
 	// Setup PHY
 	enc28j60_write_phy(PHCON1, PHCON1_PDPXMD); // Force full-duplex mode
 	enc28j60_write_phy(PHCON2, PHCON2_HDLDIS); // Disable loopback
-	enc28j60_write_phy(PHLCON, PHLCON_LACFG2| // Configure LED ctrl
-		PHLCON_LBCFG2|PHLCON_LBCFG1|PHLCON_LBCFG0|
-		PHLCON_LFRQ0|PHLCON_STRCH);
+	enc28j60_write_phy(PHLCON, 
+                       PHLCON_LACFG2 | // Configure LED ctrl
+		               PHLCON_LBCFG2 |
+                       PHLCON_LBCFG1 |
+                       PHLCON_LBCFG0 |
+		               PHLCON_LFRQ0  |
+                       PHLCON_STRCH
+    );
 
-	// Enable Rx packets
-	enc28j60_bfs(ECON1, ECON1_RXEN);
+	
+	enc28j60_bfs(ECON1, ECON1_RXEN);/*Enable Rx packets*/
 }
+
 
 void enc28j60_send_packet(uint8_t *data, uint16_t len)
 {

@@ -3,12 +3,12 @@
 
 #define ENC28J60_BUFSIZE	0x2000
 #define ENC28J60_RXSIZE		0x1A00
-#define ENC28J60_BUFEND		(ENC28J60_BUFSIZE-1)
+#define ENC28J60_BUFEND		(ENC28J60_BUFSIZE - 1)
 
-#define ENC28J60_MAXFRAME	1500
+#define ENC28J60_MAXFRAME	1518
 
 #define ENC28J60_RXSTART	0
-#define ENC28J60_RXEND		(ENC28J60_RXSIZE-1)
+#define ENC28J60_RXEND		(ENC28J60_RXSIZE - 1)
 #define ENC28J60_TXSTART	ENC28J60_RXSIZE
 
 #define ENC28J60_MII_MAC    0x80    /*MII and MAC register label*/
@@ -161,7 +161,7 @@
 // Max frame length
 #define MAMXFLL 			(0x0A | 0x40 | ENC28J60_MII_MAC)
 #define MAMXFLH 			(0x0B | 0x40 | ENC28J60_MII_MAC)
-#define MAMXFL				MAMXFLL
+#define MAMXFL				(MAMXFLL)
 
 // MAC-PHY support register
 // #define MAPHSUP 			(0x0D | 0x40 | 0x80)    /*reserved rev. E*/
@@ -173,11 +173,11 @@
 
 #define MIWRL 				(0x16 | 0x40 | ENC28J60_MII_MAC)
 #define MIWRH 				(0x17 | 0x40 | ENC28J60_MII_MAC)
-#define MIWR				MIWRL
+#define MIWR				(MIWRL)
 
 #define MIRDL 				(0x18 | 0x40 | ENC28J60_MII_MAC)
 #define MIRDH 				(0x19 | 0x40 | ENC28J60_MII_MAC)
-#define MIRD				MIRDL
+#define MIRD				(MIRDL)
 
 /*
  * Main registers Bank 3
@@ -209,9 +209,10 @@
 #define EPAUSL 				(0x18 | 0x60)
 #define EPAUSH 				(0x19 | 0x60)
 
+/*
+ * PHY registers
+ */
 
-
-// PHY registers
 #define PHCON1 				0x00
 #define PHSTAT1 			0x01
 #define PHID1 				0x02
@@ -221,6 +222,10 @@
 #define PHIE 				0x12
 #define PHIR 				0x13
 #define PHLCON 				0x14
+
+/*
+ * Bits
+ */
 
 // EIE
 #define EIE_INTIE			0x80
@@ -283,129 +288,129 @@
 #define EWOLIR_BCWOLIF		0x01
 
 // ERXFCON
-#define ERXFCON_UCEN		0x80
-#define ERXFCON_ANDOR		0x40
-#define ERXFCON_CRCEN		0x20
-#define ERXFCON_PMEN		0x10
-#define ERXFCON_MPEN		0x08
-#define ERXFCON_HTEN		0x04
-#define ERXFCON_MCEN		0x02
-#define ERXFCON_BCEN		0x01
+#define ERXFCON_UCEN        0x80
+#define ERXFCON_ANDOR       0x40
+#define ERXFCON_CRCEN       0x20
+#define ERXFCON_PMEN        0x10
+#define ERXFCON_MPEN        0x08
+#define ERXFCON_HTEN        0x04
+#define ERXFCON_MCEN        0x02
+#define ERXFCON_BCEN        0x01
 
-// MACON1
-#define MACON1_LOOPBK		0x10
-#define MACON1_TXPAUS		0x08
-#define MACON1_RXPAUS		0x04
-#define MACON1_PASSALL		0x02
-#define MACON1_MARXEN		0x01
+/*******************  Bit definition for MACON1 register  *********************/
+// #define MACON1_LOOPBK		0x10    /*reserved rev. E*/
+#define MACON1_TXPAUS       0x08    /*Pause Control Frame Transmission Enable bit*/
+#define MACON1_RXPAUS       0x04    /*Pause Control Frame Reception Enable bit*/
+#define MACON1_PASSALL      0x02    /*Pass All Received Frames Enable bit*/
+#define MACON1_MARXEN       0x01    /*MAC Receive Enable bit*/
 
-// MACON2
-#define MACON2_MARST		0x80
-#define MACON2_RNDRST		0x40
-#define MACON2_MARXRST		0x08
-#define MACON2_RFUNRST		0x04
-#define MACON2_MATXRST		0x02
-#define MACON2_TFUNRST		0x01
+/*******************  Bit definition for MACON2 register  *********************/
+/* #define MACON2_MARST        0x80    /*reserved rev. E*/
+/* #define MACON2_RNDRST       0x40    /*reserved rev. E*/
+/* #define MACON2_MARXRST      0x08    /*reserved rev. E*/
+/* #define MACON2_RFUNRST      0x04    /*reserved rev. E*/
+/* #define MACON2_MATXRST      0x02    /*reserved rev. E*/
+/* #define MACON2_TFUNRST      0x01    /*reserved rev. E*/
 
-// MACON3
-#define MACON3_PADCFG2		0x80
-#define MACON3_PADCFG1		0x40
-#define MACON3_PADCFG0		0x20
-#define MACON3_TXCRCEN		0x10
-#define MACON3_PHDRLEN		0x08
-#define MACON3_HFRMEN		0x04
-#define MACON3_FRMLNEN		0x02
-#define MACON3_FULDPX		0x01
+/*******************  Bit definition for MACON3 register  *********************/
+#define MACON3_PADCFG2		0x80    /*Auto Pad and CRC Configuration bit 2*/
+#define MACON3_PADCFG1		0x40    /*Auto Pad and CRC Configuration bit 1*/
+#define MACON3_PADCFG0		0x20    /*Auto Pad and CRC Configuration bit 0*/
+#define MACON3_TXCRCEN		0x10    /*Transmit CRC Enable bit*/
+#define MACON3_PHDRLEN		0x08    /*Proprietary Header Enable bit*/
+#define MACON3_HFRMEN		0x04    /*Huge Frame Enable bit*/
+#define MACON3_FRMLNEN		0x02    /*Frame Length Checking Enable bit*/
+#define MACON3_FULDPX		0x01    /*MAC Full-Duplex Enable bit*/
 
-// MACON4
-#define MACON4_DEFER		0x40
-#define MACON4_BPEN			0x20
-#define MACON4_NOBKOFF		0x10
-#define MACON4_LONGPRE		0x02
-#define MACON4_PUREPRE		0x01
+/*******************  Bit definition for MACON4 register  *********************/
+#define MACON4_DEFER		0x40    /*Defer Transmission Enable bit (applies to half duplex only)*/
+#define MACON4_BPEN			0x20    /*No Backoff During Backpressure Enable bit (applies to half duplex only)*/
+#define MACON4_NOBKOFF		0x10    /*No Backoff Enable bit (applies to half duplex only)*/    
+/*#define MACON4_LONGPRE		0x02    /*reserved rev. E*/
+/*#define MACON4_PUREPRE		0x01    /*reserved rev. E*/
 
-// MAPHSUP
-#define MAPHSUP_RSTINTFC	0x80
-#define MAPHSUP_RSTRMII		0x08
+/*******************  Bit definition for MAPHSUP register  ********************/
+#define MAPHSUP_RSTINTFC	0x80    /**/
+#define MAPHSUP_RSTRMII		0x08    /**/
 
-// MICON
-#define MICON_RSTMII		0x80
+/*******************  Bit definition for MICON register  **********************/
+#define MICON_RSTMII		0x80    /**/
 
-// MICMD
-#define MICMD_MIISCAN		0x02
-#define MICMD_MIIRD			0x01
+/*******************  Bit definition for MICMD register  **********************/
+#define MICMD_MIISCAN		0x02    /**/
+#define MICMD_MIIRD			0x01    /**/
 
-// EBSTCON
-#define EBSTCON_PSV2		0x80
-#define EBSTCON_PSV1		0x40
-#define EBSTCON_PSV0		0x20
-#define EBSTCON_PSEL		0x10
-#define EBSTCON_TMSEL1		0x08
-#define EBSTCON_TMSEL0		0x04
-#define EBSTCON_TME			0x02
-#define EBSTCON_BISTST		0x01
+/*******************  Bit definition for EBSTCON register  ********************/
+#define EBSTCON_PSV2		0x80    /**/
+#define EBSTCON_PSV1		0x40    /**/
+#define EBSTCON_PSV0		0x20    /**/
+#define EBSTCON_PSEL		0x10    /**/
+#define EBSTCON_TMSEL1		0x08    /**/
+#define EBSTCON_TMSEL0		0x04    /**/
+#define EBSTCON_TME			0x02    /**/
+#define EBSTCON_BISTST		0x01    /**/
 
-// MISTAT
-#define MISTAT_NVALID		0x04
-#define MISTAT_SCAN			0x02
-#define MISTAT_BUSY			0x01
+/*******************  Bit definition for MISTAT register  *********************/
+#define MISTAT_NVALID		0x04    /**/
+#define MISTAT_SCAN			0x02    /**/
+#define MISTAT_BUSY			0x01    /**/
 
-// ECOCON
-#define ECOCON_COCON2		0x04
-#define ECOCON_COCON1		0x02
-#define ECOCON_COCON0		0x01
+/*******************  Bit definition for ECOCON register  *********************/
+#define ECOCON_COCON2		0x04    /**/
+#define ECOCON_COCON1		0x02    /**/
+#define ECOCON_COCON0		0x01    /**/
 
-// EFLOCON
-#define EFLOCON_FULDPXS		0x04
-#define EFLOCON_FCEN1		0x02
-#define EFLOCON_FCEN0		0x01
+/*******************  Bit definition for EFLOCON register  ********************/
+#define EFLOCON_FULDPXS		0x04    /**/
+#define EFLOCON_FCEN1		0x02    /**/
+#define EFLOCON_FCEN0		0x01    /**/
 
-// PHCON1
-#define PHCON1_PRST			0x8000
-#define PHCON1_PLOOPBK		0x4000
-#define PHCON1_PPWRSV		0x0800
-#define PHCON1_PDPXMD		0x0100
+/*******************  Bit definition for PHCON1 register  *********************/
+#define PHCON1_PRST			0x8000  /**/
+#define PHCON1_PLOOPBK		0x4000  /**/
+#define PHCON1_PPWRSV		0x0800  /**/
+#define PHCON1_PDPXMD		0x0100  /**/
 
-// PHSTAT1
-#define PHSTAT1_PFDPX		0x1000
-#define PHSTAT1_PHDPX		0x0800
-#define PHSTAT1_LLSTAT		0x0004
-#define PHSTAT1_JBSTAT		0x0002
+/*******************  Bit definition for PHSTAT1 register  ********************/
+#define PHSTAT1_PFDPX		0x1000  /**/
+#define PHSTAT1_PHDPX		0x0800  /**/
+#define PHSTAT1_LLSTAT		0x0004  /**/
+#define PHSTAT1_JBSTAT		0x0002  /**/
 
-// PHCON2
-#define PHCON2_FRCLNK		0x4000
-#define PHCON2_TXDIS		0x2000
-#define PHCON2_JABBER		0x0400
-#define PHCON2_HDLDIS		0x0100
+/*******************  Bit definition for PHCON2 register  *********************/
+#define PHCON2_FRCLNK		0x4000  /**/
+#define PHCON2_TXDIS		0x2000  /**/
+#define PHCON2_JABBER		0x0400  /**/
+#define PHCON2_HDLDIS		0x0100  /**/
 
-// PHSTAT2
-#define PHSTAT2_TXSTAT		0x2000
-#define PHSTAT2_RXSTAT		0x1000
-#define PHSTAT2_COLSTAT		0x0800
-#define PHSTAT2_LSTAT		0x0400
-#define PHSTAT2_DPXSTAT		0x0200
-#define PHSTAT2_PLRITY		0x0010
+/*******************  Bit definition for PHSTAT2 register  ********************/
+#define PHSTAT2_TXSTAT		0x2000  /**/
+#define PHSTAT2_RXSTAT		0x1000  /**/
+#define PHSTAT2_COLSTAT		0x0800  /**/
+#define PHSTAT2_LSTAT		0x0400  /**/
+#define PHSTAT2_DPXSTAT		0x0200  /**/
+#define PHSTAT2_PLRITY		0x0010  /**/
 
-// PHIE
-#define PHIE_PLNKIE			0x0010
-#define PHIE_PGEIE			0x0002
+/*******************  Bit definition for PHIE register  ***********************/
+#define PHIE_PLNKIE			0x0010  /**/
+#define PHIE_PGEIE			0x0002  /**/
 
-// PHIR
-#define PHIR_PLNKIF			0x0010
-#define PHIR_PGIF			0x0004
+/*******************  Bit definition for PHIR register  ***********************/
+#define PHIR_PLNKIF			0x0010  /**/
+#define PHIR_PGIF			0x0004  /**/
 
-// PHLCON
-#define PHLCON_LACFG3		0x0800
-#define PHLCON_LACFG2		0x0400
-#define PHLCON_LACFG1		0x0200
-#define PHLCON_LACFG0		0x0100
-#define PHLCON_LBCFG3		0x0080
-#define PHLCON_LBCFG2		0x0040
-#define PHLCON_LBCFG1		0x0020
-#define PHLCON_LBCFG0		0x0010
-#define PHLCON_LFRQ1		0x0008
-#define PHLCON_LFRQ0		0x0004
-#define PHLCON_STRCH		0x0002
+/*******************  Bit definition for PHLCON register  *********************/
+#define PHLCON_LACFG3		0x0800  /**/
+#define PHLCON_LACFG2		0x0400  /**/
+#define PHLCON_LACFG1		0x0200  /**/
+#define PHLCON_LACFG0		0x0100  /**/
+#define PHLCON_LBCFG3		0x0080  /**/
+#define PHLCON_LBCFG2		0x0040  /**/
+#define PHLCON_LBCFG1		0x0020  /**/
+#define PHLCON_LBCFG0		0x0010  /**/
+#define PHLCON_LFRQ1		0x0008  /**/
+#define PHLCON_LFRQ0		0x0004  /**/
+#define PHLCON_STRCH		0x0002  /**/
 
 // Init ENC28J60
 void enc28j60_init(uint8_t *macadr);
@@ -421,6 +426,8 @@ uint16_t enc28j60_rcr16(uint8_t adr);
 void enc28j60_wcr16(uint8_t adr, uint16_t arg);
 void enc28j60_bfc(uint8_t adr, uint8_t mask); // Clr bits (reg &= ~mask)
 void enc28j60_bfs(uint8_t adr, uint8_t mask); // Set bits (reg |= mask)
+void enc28j60_bfc_mac_mii(uint8_t adr, uint8_t mask);
+void enc28j60_bfs_mac_mii(uint8_t adr, uint8_t mask);
 
 // R/W Rx/Tx buffer
 void enc28j60_read_buffer(uint8_t *buf, uint16_t len);

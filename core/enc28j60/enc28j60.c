@@ -323,7 +323,7 @@ void enc28j60_init(uint8_t *macadr)
                  MACON3_PADCFG0 |   /*Padding to 60 bytes and CRC*/
 		         MACON3_TXCRCEN |   /*MAC will append a valid CRC*/
                  MACON3_FRMLNEN |   /*Type/length field will be checked*/
-                 MACON3_FULDPX      /*Full-Duplex mode PDPXMD bit must also be set*/
+                 MACON3_FULDPX      /*Full-Duplex mode*/
     ); 
 
 	enc28j60_wcr16(MAMXFL, ENC28J60_MAXFRAME);

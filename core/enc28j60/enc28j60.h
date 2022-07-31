@@ -7,9 +7,9 @@
 
 #define ENC28J60_MAXFRAME	1518
 
-#define ENC28J60_RXSTART	0
-#define ENC28J60_RXEND		(ENC28J60_RXSIZE - 1)
-#define ENC28J60_TXSTART	ENC28J60_RXSIZE
+#define ENC28J60_RXSTART    0
+#define ENC28J60_RXEND      (ENC28J60_RXSIZE - 1)
+#define ENC28J60_TXSTART    ENC28J60_RXSIZE
 
 #define ENC28J60_MII_MAC    0x80    /*MII and MAC register label*/
 
@@ -44,9 +44,9 @@
 #define ERDPTH 				0x01
 #define ERDPT				ERDPTL
 
-// Buffer write pointer
-#define EWRPTL 				0x02
-#define EWRPTH 				0x03
+/*Write Pointer*/
+#define EWRPTL 				0x02    /*Write Pointer Low Byte*/
+#define EWRPTH 				0x03    /*Write Pointer High Byte*/
 #define EWRPT				EWRPTL
 
 // Tx packet start pointer
@@ -237,14 +237,14 @@
 #define EIE_TXERIE			0x02
 #define EIE_RXERIE			0x01
 
-// EIR
-#define EIR_PKTIF			0x40
-#define EIR_DMAIF			0x20
-#define EIR_LINKIF			0x10
-#define EIR_TXIF			0x08
-#define EIR_WOLIF			0x04
-#define EIR_TXERIF			0x02
-#define EIR_RXERIF			0x01
+/*******************  Bit definition for EIR register  ************************/
+#define EIR_PKTIF			0x40    /*Receive Packet Pending Interrupt Flag bit*/
+#define EIR_DMAIF			0x20    /*DMA Interrupt Flag bit*/
+#define EIR_LINKIF			0x10    /*Link Change Interrupt Flag bit*/
+#define EIR_TXIF			0x08    /*Transmit Interrupt Flag bit*/
+/*#define EIR_WOLIF			0x04    /*reserved rev. E*/
+#define EIR_TXERIF			0x02    /*Transmit Error Interrupt Flag bit*/
+#define EIR_RXERIF			0x01    /*Receive Error Interrupt Flag bit*/
 
 // ESTAT
 #define ESTAT_INT			0x80
@@ -253,21 +253,21 @@
 #define ESTAT_TXABRT		0x02
 #define ESTAT_CLKRDY		0x01
 
-// ECON2
-#define ECON2_AUTOINC		0x80
-#define ECON2_PKTDEC		0x40
-#define ECON2_PWRSV			0x20
-#define ECON2_VRPS			0x08
+/*******************  Bit definition for ECON2 register  **********************/
+#define ECON2_AUTOINC		0x80    /*Automatic Buffer Pointer Increment Enable bit*/
+#define ECON2_PKTDEC		0x40    /*Packet Decrement bit*/
+#define ECON2_PWRSV			0x20    /*Power Save Enable bit*/
+#define ECON2_VRPS			0x08    /*Voltage Regulator Power Save Enable bit*/
 
-// ECON1
-#define ECON1_TXRST			0x80
-#define ECON1_RXRST			0x40
-#define ECON1_DMAST			0x20
-#define ECON1_CSUMEN		0x10
-#define ECON1_TXRTS			0x08
-#define ECON1_RXEN			0x04
-#define ECON1_BSEL1			0x02
-#define ECON1_BSEL0			0x01
+/*******************  Bit definition for ECON1 register  **********************/
+#define ECON1_TXRST			0x80    /*Transmit Logic Reset bit*/
+#define ECON1_RXRST			0x40    /*Receive Logic Reset bit*/
+#define ECON1_DMAST			0x20    /*DMA Start and Busy Status bit*/
+#define ECON1_CSUMEN		0x10    /*DMA Checksum Enable bit*/
+#define ECON1_TXRTS			0x08    /*Transmit Request to Send bit*/
+#define ECON1_RXEN			0x04    /*Receive Enable bit*/
+#define ECON1_BSEL1			0x02    /*Bank Select bit 1*/
+#define ECON1_BSEL0			0x01    /*Bank Select bit 0*/
 
 // EWOLIE
 #define EWOLIE_UCWOLIE		0x80

@@ -3,7 +3,7 @@
 #include "enc28j60.h"
 
 static uint8_t enc28j60_current_bank = 0;
-static uint16_t enc28j60_rxrdpt = 0;
+static uint16_t enc28j60_rxrdpt = 0;/*Next packet pointer.*/
 
 
 /**
@@ -298,9 +298,13 @@ void enc28j60_write_phy(uint8_t adr, uint16_t data)
 }
 
 
-/*
- * Init & packet Rx/Tx
- */
+/**
+  * @brief Init & packet Rx/Tx
+  *
+  * @param macadr 
+  * 
+  * @retval None
+  */
 void enc28j60_init(uint8_t *macadr)
 {
 	enc28j60_spi_init();/*Initialize SPI*/
@@ -318,7 +322,7 @@ void enc28j60_init(uint8_t *macadr)
 		         MACON1_RXPAUS |
                  MACON1_MARXEN    /*Enable MAC Rx*/
     ); 
-	// enc28j60_wcr(MACON2, 0); /*Clear reset /*reserved rev. E*/
+	/*enc28j60_wcr(MACON2, 0); /*Clear reset /*reserved rev. E*/
 	enc28j60_wcr(MACON3, 
                  MACON3_PADCFG0 |   /*Padding to 60 bytes and CRC*/
 		         MACON3_TXCRCEN |   /*MAC will append a valid CRC*/
@@ -327,39 +331,46 @@ void enc28j60_init(uint8_t *macadr)
     ); 
 
 	enc28j60_wcr16(MAMXFL, ENC28J60_MAXFRAME);
-	enc28j60_wcr(MABBIPG, 0x15); // Set inter-frame gap
-	enc28j60_wcr(MAIPGL, 0x12);
-	enc28j60_wcr(MAIPGH, 0x0c);
-	enc28j60_wcr(MAADR6, macadr[0]); // Set MAC address
+	enc28j60_wcr(MABBIPG, 0x15);/*Back-to-Back Inter-Packet Gap*/
+	enc28j60_wcr(MAIPGL, 0x12);/*Non-Back-to-Back Inter-Packet Gap*/
+	enc28j60_wcr(MAIPGH, 0x0c);/*Non-Back-to-Back Inter-Packet Gap half duplex*/
+	enc28j60_wcr(MAADR6, macadr[0]);/*Set MAC address*/
 	enc28j60_wcr(MAADR5, macadr[1]);
 	enc28j60_wcr(MAADR4, macadr[2]);
 	enc28j60_wcr(MAADR3, macadr[3]);
 	enc28j60_wcr(MAADR2, macadr[4]);
 	enc28j60_wcr(MAADR1, macadr[5]);
 
-	// Setup PHY
-	enc28j60_write_phy(PHCON1, PHCON1_PDPXMD); // Force full-duplex mode
-	enc28j60_write_phy(PHCON2, PHCON2_HDLDIS); // Disable loopback
+	/*Setup PHY*/
+	enc28j60_write_phy(PHCON1, PHCON1_PDPXMD);/*Force full-duplex mode*/
+	enc28j60_write_phy(PHCON2, PHCON2_HDLDIS);/*Disable loopback*/
 	enc28j60_write_phy(PHLCON, 
-                       PHLCON_LACFG2 | // Configure LED ctrl
+                       PHLCON_LACFG2 |        /*Configure LED ctrl*/
 		               PHLCON_LBCFG2 |
                        PHLCON_LBCFG1 |
                        PHLCON_LBCFG0 |
 		               PHLCON_LFRQ0  |
                        PHLCON_STRCH
     );
-
 	
 	enc28j60_bfs(ECON1, ECON1_RXEN);/*Enable Rx packets*/
 }
 
 
+/**
+  * @brief 
+  *
+  * @param data 
+  * @param len 
+  * 
+  * @retval None
+  */
 void enc28j60_send_packet(uint8_t *data, uint16_t len)
 {
 	while(enc28j60_rcr(ECON1) & ECON1_TXRTS)
 	{
-		// TXRTS may not clear - ENC28J60 bug. We must reset
-		// transmit logic in cause of Tx error
+		/*TXRTS may not clear - ENC28J60 bug. We must reset 
+          transmit logic in cause of Tx error*/
 		if(enc28j60_rcr(EIR) & EIR_TXERIF)
 		{
 			enc28j60_bfs(ECON1, ECON1_TXRST);
@@ -368,8 +379,8 @@ void enc28j60_send_packet(uint8_t *data, uint16_t len)
 	}
 
 	enc28j60_wcr16(EWRPT, ENC28J60_TXSTART);
-	enc28j60_write_buffer((uint8_t*)"\x00", 1);
-	enc28j60_write_buffer(data, len);
+	enc28j60_write_buffer((uint8_t*)"\x00", 1);/*Write control byte*/
+	enc28j60_write_buffer(data, len);/*Write a frame*/
 
 	enc28j60_wcr16(ETXST, ENC28J60_TXSTART);
 	enc28j60_wcr16(ETXND, ENC28J60_TXSTART + len);
@@ -377,6 +388,15 @@ void enc28j60_send_packet(uint8_t *data, uint16_t len)
 	enc28j60_bfs(ECON1, ECON1_TXRTS); // Request packet send
 }
 
+
+/**
+  * @brief 
+  *
+  * @param buf 
+  * @param buflen 
+  * 
+  * @retval Length of received packet
+  */
 uint16_t enc28j60_recv_packet(uint8_t *buf, uint16_t buflen)
 {
 	uint16_t len = 0, rxlen, status, temp;
@@ -392,7 +412,10 @@ uint16_t enc28j60_recv_packet(uint8_t *buf, uint16_t buflen)
 		if(status & 0x80) //success
 		{
 			len = rxlen - 4; //throw out crc
-			if(len > buflen) len = buflen;
+			if(len > buflen)
+            {
+                len = buflen;
+            } 
 			enc28j60_read_buffer(buf, len);	
 		}
 

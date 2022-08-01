@@ -3,7 +3,7 @@
 #include "enc28j60.h"
 
 static uint8_t enc28j60_current_bank = 0;
-static uint16_t enc28j60_rxrdpt = 0;/*Next packet pointer.*/
+static uint16_t enc28j60_rxrdpt = 0;/*Next packet pointer*/
 
 
 /**
@@ -82,7 +82,7 @@ void enc28j60_set_bank(uint8_t adr)
 
 	if( (adr & ENC28J60_ADDR_MASK) < ENC28J60_COMMON_CR )
 	{
-		bank = (adr >> 5) & ENC28J60_BANK_SEL_MASK;
+		bank = (adr >> 5) & ENC28J60_BANK_MASK;
 		if(bank != enc28j60_current_bank)
 		{
 			enc28j60_write_op(ENC28J60_SPI_BFC, ECON1, 0x03);
@@ -367,25 +367,25 @@ void enc28j60_init(uint8_t *macadr)
   */
 void enc28j60_send_packet(uint8_t *data, uint16_t len)
 {
-	while(enc28j60_rcr(ECON1) & ECON1_TXRTS)
-	{
-		/*TXRTS may not clear - ENC28J60 bug. We must reset 
+    while(enc28j60_rcr(ECON1) & ECON1_TXRTS)
+    {
+        /*TXRTS may not clear - ENC28J60 bug. We must reset 
           transmit logic in cause of Tx error*/
-		if(enc28j60_rcr(EIR) & EIR_TXERIF)
-		{
-			enc28j60_bfs(ECON1, ECON1_TXRST);
-			enc28j60_bfc(ECON1, ECON1_TXRST);
-		}
-	}
+        if(enc28j60_rcr(EIR) & EIR_TXERIF)
+        {
+            enc28j60_bfs(ECON1, ECON1_TXRST);
+            enc28j60_bfc(ECON1, ECON1_TXRST);
+        }
+    }
 
-	enc28j60_wcr16(EWRPT, ENC28J60_TXSTART);
-	enc28j60_write_buffer((uint8_t*)"\x00", 1);/*Write control byte*/
-	enc28j60_write_buffer(data, len);/*Write a frame*/
+    enc28j60_wcr16(EWRPT, ENC28J60_TXSTART);
+    enc28j60_write_buffer((uint8_t*)"\x00", 1);/*Write control byte*/
+    enc28j60_write_buffer(data, len);/*Write a frame*/
 
-	enc28j60_wcr16(ETXST, ENC28J60_TXSTART);
-	enc28j60_wcr16(ETXND, ENC28J60_TXSTART + len);
+    enc28j60_wcr16(ETXST, ENC28J60_TXSTART);
+    enc28j60_wcr16(ETXND, ENC28J60_TXSTART + len);
 
-	enc28j60_bfs(ECON1, ECON1_TXRTS); // Request packet send
+    enc28j60_bfs(ECON1, ECON1_TXRTS);/*Request to send packet*/
 }
 
 

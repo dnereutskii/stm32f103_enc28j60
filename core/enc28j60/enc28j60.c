@@ -273,10 +273,10 @@ void enc28j60_write_buffer(uint8_t *buf, uint16_t len)
 uint16_t enc28j60_read_phy(uint8_t adr)
 {
 	enc28j60_wcr(MIREGADR, adr);
-	/*enc28j60_bfs(MICMD, MICMD_MIIRD);/*warning: p29 sub 4.2.5 of datasheet*/
+	/*enc28j60_bfs(MICMD, MICMD_MIIRD);*//*warning: p29 sub 4.2.5 of datasheet*/
     enc28j60_bfs_mac_mii(MICMD, MICMD_MIIRD);
 	while (enc28j60_rcr(MISTAT) & MISTAT_BUSY){}
-	/*enc28j60_bfc(MICMD, MICMD_MIIRD);/*warning: p29 sub 4.2.5 of datasheet*/
+	/*enc28j60_bfc(MICMD, MICMD_MIIRD);*//*warning: p29 sub 4.2.5 of datasheet*/
 	enc28j60_bfc_mac_mii(MICMD, MICMD_MIIRD);
 	return enc28j60_rcr16(MIRD);
 }
@@ -322,7 +322,7 @@ void enc28j60_init(uint8_t *macadr)
 		         MACON1_RXPAUS |
                  MACON1_MARXEN    /*Enable MAC Rx*/
     ); 
-	/*enc28j60_wcr(MACON2, 0); /*Clear reset /*reserved rev. E*/
+	/*enc28j60_wcr(MACON2, 0);*//*Clear reset reserved rev. E*/
 	enc28j60_wcr(MACON3, 
                  MACON3_PADCFG0 |   /*Padding to 60 bytes and CRC*/
 		         MACON3_TXCRCEN |   /*MAC will append a valid CRC*/

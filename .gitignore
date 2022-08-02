@@ -1,9 +1,11 @@
 # Object files
 *.o
-*.elf
 
-# Executables
+# Executable files
 *.hex
 *.bin 
+*.elf
 
-*.json
+# IDE files
+.vscode
+.settings

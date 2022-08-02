@@ -2,7 +2,7 @@
 # STD_PERIPH_LIBS ?= ./STM32F10x_StdPeriph_Lib_V3.5.0/
 
 # list of source files
-SOURCES  = core/main.c
+SOURCES  = main.c
 SOURCES += cmsis/src/system_stm32f1xx.c
 SOURCES += core/enc28j60/enc28j60.c
 SOURCES += core/enc28j60/spi/enc28j60_spi.c

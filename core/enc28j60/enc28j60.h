@@ -242,7 +242,7 @@
 #define EIR_DMAIF			0x20    /*DMA Interrupt Flag bit*/
 #define EIR_LINKIF			0x10    /*Link Change Interrupt Flag bit*/
 #define EIR_TXIF			0x08    /*Transmit Interrupt Flag bit*/
-/*#define EIR_WOLIF			0x04    /*reserved rev. E*/
+/*#define EIR_WOLIF			0x04    reserved rev. E*/
 #define EIR_TXERIF			0x02    /*Transmit Error Interrupt Flag bit*/
 #define EIR_RXERIF			0x01    /*Receive Error Interrupt Flag bit*/
 
@@ -305,12 +305,12 @@
 #define MACON1_MARXEN       0x01    /*MAC Receive Enable bit*/
 
 /*******************  Bit definition for MACON2 register  *********************/
-/* #define MACON2_MARST        0x80    /*reserved rev. E*/
-/* #define MACON2_RNDRST       0x40    /*reserved rev. E*/
-/* #define MACON2_MARXRST      0x08    /*reserved rev. E*/
-/* #define MACON2_RFUNRST      0x04    /*reserved rev. E*/
-/* #define MACON2_MATXRST      0x02    /*reserved rev. E*/
-/* #define MACON2_TFUNRST      0x01    /*reserved rev. E*/
+/* #define MACON2_MARST        0x80    reserved rev. E*/
+/* #define MACON2_RNDRST       0x40    reserved rev. E*/
+/* #define MACON2_MARXRST      0x08    reserved rev. E*/
+/* #define MACON2_RFUNRST      0x04    reserved rev. E*/
+/* #define MACON2_MATXRST      0x02    reserved rev. E*/
+/* #define MACON2_TFUNRST      0x01    reserved rev. E*/
 
 /*******************  Bit definition for MACON3 register  *********************/
 #define MACON3_PADCFG2		0x80    /*Auto Pad and CRC Configuration bit 2*/
@@ -326,8 +326,8 @@
 #define MACON4_DEFER		0x40    /*Defer Transmission Enable bit (applies to half duplex only)*/
 #define MACON4_BPEN			0x20    /*No Backoff During Backpressure Enable bit (applies to half duplex only)*/
 #define MACON4_NOBKOFF		0x10    /*No Backoff Enable bit (applies to half duplex only)*/    
-/*#define MACON4_LONGPRE		0x02    /*reserved rev. E*/
-/*#define MACON4_PUREPRE		0x01    /*reserved rev. E*/
+/*#define MACON4_LONGPRE		0x02    reserved rev. E*/
+/*#define MACON4_PUREPRE		0x01    reserved rev. E*/
 
 /*******************  Bit definition for MAPHSUP register  ********************/
 #define MAPHSUP_RSTINTFC	0x80    /**/

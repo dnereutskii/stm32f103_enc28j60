@@ -224,7 +224,9 @@ typedef enum
 #define MASK_TO_BIT01(A)        (A==0x00000002)? 1  : MASK_TO_BIT02(A)
 #define MASK_TO_BIT(A)          (A==0x00000001)? 0  : MASK_TO_BIT01(A)
 
-#define	BIT_BAND_PER(reg, reg_val)	(*(volatile uint32_t*)(PERIPH_BB_BASE+32*((uint32_t)(&(reg))-PERIPH_BASE)+4*((uint32_t)(MASK_TO_BIT(reg_val)))))
+#define	BIT_BAND_PER(reg, reg_val)	(*(volatile uint32_t*)(PERIPH_BB_BASE + \
+                                    32 * ((uint32_t)(&(reg))-PERIPH_BASE) + \
+                                    4 * ((uint32_t)(MASK_TO_BIT(reg_val)))))
 /**
   * @}
   */

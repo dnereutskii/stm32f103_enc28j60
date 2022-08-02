@@ -28,7 +28,7 @@ int main()
     clock_init();
     swd_init();
     led_init();
-    dwt_init();
+    delay_init();
     
     while(1)
     {
@@ -121,7 +121,7 @@ void clock_init()
  */
 void systick_init(uint32_t times)
 {
-    SysTick->LOAD = SysTick_LOAD_RELOAD_Msk&(SYSCLOCK / times - 1);
+    SysTick->LOAD = SysTick_LOAD_RELOAD_Msk&(SystemCoreClock / times - 1);
     SysTick->VAL = SysTick_VAL_CURRENT_Msk;       /*reset counter*/
     SysTick->CTRL |= SysTick_CTRL_CLKSOURCE_Msk|\
                      SysTick_CTRL_TICKINT_Msk|\

@@ -28,18 +28,18 @@ int main()
     clock_init();
     swd_init();
     led_init();
-    // systick_init(ONE_MS);
     dwt_init();
-    enc28j60_spi_init();
-    enc28j60_spi_enable();
     
     while(1)
     {
-        // ENC28J60_WRITE_BYTE(0x17);
-        // GPIOC->BSRR = GPIO_BSRR_BR13;//on led
-        // delay_ms(1000);
-        // GPIOC->BSRR = GPIO_BSRR_BS13;//off led
-        // delay_ms(1000);
+        GPIOC->BSRR = GPIO_BSRR_BR13;//on led
+        // BIT_BAND_PER(GPIOC->ODR, GPIO_ODR_ODR13) = 1;
+        // GPIOC->ODR |= GPIO_ODR_ODR13;
+        delay_ms(1000);
+        GPIOC->BSRR = GPIO_BSRR_BS13;//off led
+        // BIT_BAND_PER(GPIOC->ODR, GPIO_ODR_ODR13) = 0;
+        // GPIOC->ODR &= ~GPIO_ODR_ODR13;
+        delay_ms(1000);
     };
 
     return 0;
@@ -48,6 +48,13 @@ int main()
 
 void led_init()
 {
+    // BIT_BAND_PER(RCC->APB2ENR, RCC_APB2ENR_IOPCEN) = 1;
+    // BIT_BAND_PER(GPIOC->CRH, GPIO_CRH_MODE13) = 1;
+    // BIT_BAND_PER(GPIOC->CRH, GPIO_CRH_CNF13_0) = 1;
+    // BIT_BAND_PER(GPIOC->BSRR, GPIO_BSRR_BS13) = 1;
+
+
+
     RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;             /*clock enable for GPIOC on APB2 bus*/
     GPIOC->CRH |= GPIO_CRH_MODE13|GPIO_CRH_CNF13_0; /*PC13 is output mode 50 MHz open-drain*/
     GPIOC->BSRR = GPIO_BSRR_BS13;                   /*off led*/

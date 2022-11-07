@@ -9,3 +9,5 @@
 # IDE files
 .vscode
 .settings
+/Debug
+/Release

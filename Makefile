@@ -6,6 +6,7 @@ SOURCES  = main.c
 SOURCES += cmsis/src/system_stm32f1xx.c
 SOURCES += core/enc28j60/enc28j60.c
 SOURCES += core/enc28j60/spi/enc28j60_spi.c
+SOURCES += core/delay/delay.c
 
 
 # add startup file to build

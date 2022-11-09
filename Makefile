@@ -26,7 +26,7 @@ ST_FLASH ?= st-flash
 ST_INFO = st-info
 
 # specify compiler flags
-CFLAGS  = -g -O0 -Wall
+CFLAGS  = -g -O1 -Wall
 CFLAGS += -T ./startup/STM32F103XB_FLASH.ld
 CFLAGS += -mlittle-endian -mthumb -mcpu=cortex-m3 -mthumb-interwork
 CFLAGS += -DSTM32F103xB

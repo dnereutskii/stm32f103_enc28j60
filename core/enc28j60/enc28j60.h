@@ -1,5 +1,5 @@
-#ifndef __ENC28J60_H
-#define __ENC28J60_H
+#ifndef ENC28J60_H
+#define ENC28J60_H
 
 #define ENC28J60_BUFSIZE	0x2000
 #define ENC28J60_RXSIZE		0x1A00
@@ -412,37 +412,126 @@
 #define PHLCON_LFRQ0		0x0004  /**/
 #define PHLCON_STRCH		0x0002  /**/
 
-// Init ENC28J60
+
+/**
+  * @brief Initialize ENC28j60
+  * @param macadr MAC addres
+  * @return None
+  */
 void enc28j60_init(uint8_t *macadr);
 
 // Snd/Rcv packets
+/**
+  * @brief 
+  * @param  data 
+  * @param  len 
+  * @return None
+  */
 void enc28j60_send_packet(uint8_t *data, uint16_t len);
+
+/**
+  * @brief 
+  * @param  buf 
+  * @param  buflen 
+  * @return uint16_t Length of received packet
+  */
 uint16_t enc28j60_recv_packet(uint8_t *buf, uint16_t buflen);
 
 // R/W control registers
 /**
   * @brief  Read Control Register
   * @param  adr Main register address
-  * @return Main register value	
+  * @return uint8_t Main register value	
   */
 uint8_t enc28j60_rcr(uint8_t adr);
 
-void enc28j60_wcr(uint8_t adr, uint8_t arg);
-
+/**
+  * @brief  Read register pair
+  * @param  adr Main register address
+  * @return uint16_t Main register value	
+  */
 uint16_t enc28j60_rcr16(uint8_t adr);
 
+/**
+  * @brief  Write control register
+  * @param  adr Main register address
+  * @param  arg Data to be written
+  * @return None
+  */
+void enc28j60_wcr(uint8_t adr, uint8_t arg);
+
+/**
+  * @brief  Write conrol register pair
+  * @param  adr Main register address
+  * @param  arg Data to be written
+  * @return None
+  */
 void enc28j60_wcr16(uint8_t adr, uint16_t arg);
-void enc28j60_bfc(uint8_t adr, uint8_t mask); // Clr bits (reg &= ~mask)
-void enc28j60_bfs(uint8_t adr, uint8_t mask); // Set bits (reg |= mask)
+
+/**
+  * @brief  Clear bits in ETH control register (reg &= ~mask)
+  * @param  adr ETH register address
+  * @param  mask Bit mask
+  * @return None
+  */
+void enc28j60_bfc(uint8_t adr, uint8_t mask);
+
+/**
+  * @brief  Set bits in control register (reg |= mask)
+  * @param  adr ETH register address
+  * @param  mask Bit mask
+  * @return None
+  */
+void enc28j60_bfs(uint8_t adr, uint8_t mask);
+
+
+/**
+  * @brief  Clear bits in MII or MAC registers (reg &= ~mask)
+  * @param  adr MAC or MII register address
+  * @param  mask Bit mask
+  * @return None
+  */
 void enc28j60_bfc_mac_mii(uint8_t adr, uint8_t mask);
+
+/**
+  * @brief  Set bits in MII or MAC registers (reg |= mask)
+  * @param  adr MAC or MII register address
+  * @param  mask Bit mask
+  * @return None
+  */
 void enc28j60_bfs_mac_mii(uint8_t adr, uint8_t mask);
 
 // R/W Rx/Tx buffer
+/**
+  * @brief  Read Rx/Tx buffer (at ERDPT)
+  * @param  buf User buffer to be filled 
+  * @param  len Buffer length
+  * @return None
+  */
 void enc28j60_read_buffer(uint8_t *buf, uint16_t len);
+
+/**
+  * @brief  Write Rx/Tx buffer (at EWRPT)
+  * @param  buf User buffer to be filled 
+  * @param  len Data length
+  * @return None
+  */
 void enc28j60_write_buffer(uint8_t *buf, uint16_t len);
 
 // R/W PHY reg
+/**
+  * @brief  Read PHY register
+  * @param  adr PHY address
+  * @return uint16_t PHY register value
+  */
 uint16_t enc28j60_read_phy(uint8_t adr);
+
+/**
+  * @brief  Write PHY register
+  * @param  adr  PHY address
+  * @param  data Data to be written
+  * @return None
+  */
 void enc28j60_write_phy(uint8_t adr, uint16_t data);
 
-#endif /*__ENC28J60_H*/
+#endif /* ENC28J60_H */

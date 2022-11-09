@@ -420,9 +420,17 @@ void enc28j60_send_packet(uint8_t *data, uint16_t len);
 uint16_t enc28j60_recv_packet(uint8_t *buf, uint16_t buflen);
 
 // R/W control registers
+/**
+  * @brief  Read Control Register
+  * @param  adr Main register address
+  * @return Main register value	
+  */
 uint8_t enc28j60_rcr(uint8_t adr);
+
 void enc28j60_wcr(uint8_t adr, uint8_t arg);
+
 uint16_t enc28j60_rcr16(uint8_t adr);
+
 void enc28j60_wcr16(uint8_t adr, uint16_t arg);
 void enc28j60_bfc(uint8_t adr, uint8_t mask); // Clr bits (reg &= ~mask)
 void enc28j60_bfs(uint8_t adr, uint8_t mask); // Set bits (reg |= mask)

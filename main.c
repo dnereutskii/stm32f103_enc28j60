@@ -1,10 +1,9 @@
 #include "stm32f1xx.h"
 #include "delay.h"
-#include "enc28j60_spi.h"
+#include "enc28j60.h"
 
 #define ONE_MS      1000U       /*Delay milliseconds const*/
 #define ONE_US      1000000U    /*Delay microseconds const*/
-
 
 void delay(uint32_t tck);
 void systick_init(uint32_t times);
@@ -13,8 +12,8 @@ void swd_init();
 void clock_deinit();
 void clock_init();
 
-
 volatile uint32_t systick_cnt = 0U;
+uint8_t mac_addr[] = {0x00,0x13,0x37,0x01,0x23,0x45};
 
 
 void SysTick_Handler()
@@ -25,11 +24,14 @@ void SysTick_Handler()
 
 int main()
 {
+    uint8_t enc_revid = 0;
+
     clock_init();
     swd_init();
     led_init();
     delay_init();
-    
+    enc28j60_init(mac_addr);
+    enc_revid = enc28j60_rcr(EREVID);
     while(1)
     {
         GPIOC->BSRR = GPIO_BSRR_BR13;//on led

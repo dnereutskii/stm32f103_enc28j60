@@ -92,14 +92,6 @@ void enc28j60_set_bank(uint8_t adr)
 	}
 }
 
-
-/**
-  * @brief Read Control Register
-  *
-  * @param adr Main register address
-  * 
-  * @retval Main register value	
-  */
 uint8_t enc28j60_rcr(uint8_t adr)
 {
 	enc28j60_set_bank(adr);

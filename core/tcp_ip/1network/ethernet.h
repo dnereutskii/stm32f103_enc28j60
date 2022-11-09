@@ -11,7 +11,9 @@ typedef struct eth_frame {
     uint8_t data[];
 } eth_frame_t;
 
+extern uint8_t mac_addr[];
+
 void eth_reply(eth_frame_t *frame, uint16_t len);
 void eth_filter(eth_frame_t *frame, uint16_t len);
 
-#endif /*ETHERNET_H*/
+#endif /* ETHERNET_H */

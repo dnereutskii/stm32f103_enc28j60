@@ -2,7 +2,7 @@
 #include "ethernet.h"
 
 
-uint8_t mac_addr[6] = MAC_ADDR;
+uint8_t mac_addr[] = {0x00, 0x13, 0x37, 0x01, 0x23, 0x45};
 
 
 void eth_reply(eth_frame_t *frame, uint16_t len)

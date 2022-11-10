@@ -1,5 +1,5 @@
+#include <string.h>
 #include "stm32f1xx.h"
-#include "string.h"
 #include "ethernet.h"
 #include "ip.h"
 #include "arp.h"
@@ -24,12 +24,12 @@ void eth_filter(eth_frame_t *frame, uint16_t len)
     {
         switch(frame->type)
         {
-        case ETH_TYPE_ARP:
-            arp_filter(frame, len - sizeof(eth_frame_t));
-            break;
-        case ETH_TYPE_IP:
-            ip_filter(frame, len - sizeof(eth_frame_t));
-            break;
+            case ETH_TYPE_ARP:
+                arp_filter(frame, len - sizeof(eth_frame_t));
+                break;
+            case ETH_TYPE_IP:
+                ip_filter(frame, len - sizeof(eth_frame_t));
+                break;
         }
     }
 }

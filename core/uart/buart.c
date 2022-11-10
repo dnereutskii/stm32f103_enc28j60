@@ -1,16 +1,19 @@
+#include "stm32f1xx.h"
 #include "buart.h"
 
-uint8_t uart_rxrd, uart_rxwr;
+uint8_t uart_rxrd;
+uint8_t uart_rxwr;
 uint8_t uart_rx[UART_BUFSIZE];
 
-uint8_t uart_txrd, uart_txwr;
+uint8_t uart_txrd;
+uint8_t uart_txwr;
 uint8_t uart_tx[UART_BUFSIZE];
 
 
-ISR(USART_RXC_vect)
+USART1_IRQHandler(USART_RXC_vect)
 {
 	uint8_t byte;
-	uint8_t wr = (uart_rxwr+1) & UART_BUFEND;
+	uint8_t wr = (uart_rxwr + 1) & UART_BUFEND;
 	byte = UDR;
 	if(wr != uart_rxrd)
 	{
@@ -19,7 +22,7 @@ ISR(USART_RXC_vect)
 	}
 }
 
-ISR(USART_UDRE_vect)
+USART1_IRQHandler(USART_UDRE_vect)
 {
 	uint8_t rd = uart_txrd;
 	if(rd != uart_txwr)
@@ -60,9 +63,7 @@ void uart_write(uint8_t byte)
 	}
 }
 
-void uart_init()
+void uart_init(void)
 {
-	UBRRL = F_CPU/UART_RATE/16-1;
-	UBRRH = (F_CPU/UART_RATE/16-1)>>8;
-	UCSRB = (1<<RXCIE)|(1<<RXEN)|(1<<TXEN);
+
 }

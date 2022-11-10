@@ -52,8 +52,7 @@ void ip_filter(eth_frame_t *frame, uint16_t len)
         if( (packet->ver_head_len == 0x45) &&
             (packet->to_addr == ip_addr) )
         {
-            len = ntohs(packet->total_len) - 
-                sizeof(ip_packet_t);
+            len = ntohs(packet->total_len) - sizeof(ip_packet_t);
 
             switch(packet->protocol)
             {

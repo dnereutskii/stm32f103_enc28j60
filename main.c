@@ -40,11 +40,9 @@ int main()
     {
         lan_poll();
         GPIOC->BSRR = GPIO_BSRR_BR13;//on led
-        // BIT_BAND_PER(GPIOC->ODR, GPIO_ODR_ODR13) = 1;
         // GPIOC->ODR |= GPIO_ODR_ODR13;
         delay_ms(1000);
         GPIOC->BSRR = GPIO_BSRR_BS13;//off led
-        // BIT_BAND_PER(GPIOC->ODR, GPIO_ODR_ODR13) = 0;
         // GPIOC->ODR &= ~GPIO_ODR_ODR13;
         delay_ms(1000);
     };

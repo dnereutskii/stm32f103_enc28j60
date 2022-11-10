@@ -1,4 +1,6 @@
 #include "stm32f1xx.h"
+#include "ethernet.h"
+#include "ip.h"
 #include "icmp.h"
 
 

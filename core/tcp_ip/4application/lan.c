@@ -1,4 +1,5 @@
 #include "stm32f1xx.h"
+#include "enc28j60.h"
 #include "ethernet.h"
 #include "lan.h"
 
@@ -14,7 +15,7 @@ void lan_poll()
 	uint16_t len;
 	eth_frame_t *frame = (void*)net_buf;
 	
-	while(len = enc28j60_recv_packet(net_buf, sizeof(net_buf)))
+	while((len = enc28j60_recv_packet(net_buf, sizeof(net_buf))))
     {
 		eth_filter(frame, len);
     }

@@ -1,16 +1,20 @@
 #include "stm32f1xx.h"
+#include "string.h"
 #include "ethernet.h"
+#include "ip.h"
+#include "arp.h"
+#include "enc28j60.h"
+#include "lan.h"
 
 
-uint8_t mac_addr[] = {0x00, 0x13, 0x37, 0x01, 0x23, 0x45};
+uint8_t mac_addr[] = MAC_ADDR;
 
 
 void eth_reply(eth_frame_t *frame, uint16_t len)
 {
 	memcpy(frame->to_addr, frame->from_addr, 6);
 	memcpy(frame->from_addr, mac_addr, 6);
-	enc28j60_send_packet((void*)frame, len + 
-		sizeof(eth_frame_t));
+	enc28j60_send_packet((void*)frame, len + sizeof(eth_frame_t));
 }
 
 

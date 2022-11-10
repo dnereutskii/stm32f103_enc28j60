@@ -13,7 +13,7 @@ void clock_deinit();
 void clock_init();
 
 volatile uint32_t systick_cnt = 0U;
-uint8_t mac_addr[] = {0x00,0x13,0x37,0x01,0x23,0x45};
+// uint8_t mac_addr[] = {0x00,0x13,0x37,0x01,0x23,0x45};
 
 
 void SysTick_Handler()
@@ -24,14 +24,14 @@ void SysTick_Handler()
 
 int main()
 {
-    uint8_t enc_revid = 0;
+    // uint8_t enc_revid = 0;
 
     clock_init();
     swd_init();
     led_init();
     delay_init();
-    enc28j60_init(mac_addr);
-    enc_revid = enc28j60_rcr(EREVID);
+    // enc28j60_init(mac_addr);
+    // enc_revid = enc28j60_rcr(EREVID);
     while(1)
     {
         GPIOC->BSRR = GPIO_BSRR_BR13;//on led

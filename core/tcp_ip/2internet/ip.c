@@ -1,11 +1,13 @@
-#include "stm32f1xx.h" 
+#include "stm32f1xx.h"
+#include "ethernet.h"
 #include "ip.h"
-
+#include "icmp.h"
+#include "udp.h"
+#include "lan.h"
 
 uint32_t ip_addr = IP_ADDR;
 
-
-uint16_t ip_cksum(uint32_t sum, uint8_t *buf, size_t len)
+uint16_t ip_cksum(uint32_t sum, uint8_t *buf, uint16_t len)
 {
 	while(len >= 2)
 	{
@@ -56,13 +58,13 @@ void ip_filter(eth_frame_t *frame, uint16_t len)
             switch(packet->protocol)
             {
 #ifdef WITH_ICMP
-        case IP_PROTOCOL_ICMP:
-            icmp_filter(frame, len);
-            break;
+                case IP_PROTOCOL_ICMP:
+                    icmp_filter(frame, len);
+                    break;
 #endif
-            case IP_PROTOCOL_UDP:
-                udp_filter(frame, len);
-                break;
+                case IP_PROTOCOL_UDP:
+                    udp_filter(frame, len);
+                    break;
             }
         }
     //}

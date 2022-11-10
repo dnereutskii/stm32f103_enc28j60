@@ -7,7 +7,12 @@ SOURCES += cmsis/src/system_stm32f1xx.c
 SOURCES += core/enc28j60/enc28j60.c
 SOURCES += core/enc28j60/spi/enc28j60_spi.c
 SOURCES += core/delay/delay.c
-
+SOURCES += core/tcp_ip/1network/ethernet.c
+SOURCES += core/tcp_ip/1network/arp.c
+SOURCES += core/tcp_ip/2internet/ip.c
+SOURCES += core/tcp_ip/2internet/icmp.c
+SOURCES += core/tcp_ip/3transport/udp.c
+SOURCES += core/tcp_ip/4application/lan.c
 
 # add startup file to build
 SOURCES += ./startup/startup_stm32f103xb.s
@@ -40,6 +45,12 @@ CFLAGS += -I ./core/delay/
 # enc28j60 headers 
 CFLAGS += -I ./core/enc28j60/
 CFLAGS += -I ./core/enc28j60/spi
+# tcp_ip headers 
+CFLAGS += -I ./core/tcp_ip
+CFLAGS += -I ./core/tcp_ip/1network
+CFLAGS += -I ./core/tcp_ip/2internet
+CFLAGS += -I ./core/tcp_ip/3transport
+CFLAGS += -I ./core/tcp_ip/4application
 
 
 OBJS = $(SOURCES:.c=.o)

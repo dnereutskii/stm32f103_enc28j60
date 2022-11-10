@@ -7,6 +7,7 @@
 #define ARP_TYPE_REQUEST    htons(1)
 #define ARP_TYPE_RESPONSE   htons(2)
 
+#pragma pack(push, 1)
 typedef struct arp_message {
     uint16_t hw_type;
     uint16_t proto_type;
@@ -18,6 +19,7 @@ typedef struct arp_message {
     uint8_t mac_addr_to[6];
     uint32_t ip_addr_to;
 } arp_message_t;
+#pragma pack(pop)
 
 void arp_filter(eth_frame_t *frame, uint16_t len);
 

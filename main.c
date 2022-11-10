@@ -1,6 +1,8 @@
 #include "stm32f1xx.h"
 #include "delay.h"
 #include "enc28j60.h"
+#include "lan.h"
+// #include "buart.h"
 
 #define ONE_MS      1000U       /*Delay milliseconds const*/
 #define ONE_US      1000000U    /*Delay microseconds const*/
@@ -30,10 +32,13 @@ int main()
     swd_init();
     led_init();
     delay_init();
+    lan_init();
+    // uart_init();
     // enc28j60_init(mac_addr);
     // enc_revid = enc28j60_rcr(EREVID);
     while(1)
     {
+        lan_poll();
         GPIOC->BSRR = GPIO_BSRR_BR13;//on led
         // BIT_BAND_PER(GPIOC->ODR, GPIO_ODR_ODR13) = 1;
         // GPIOC->ODR |= GPIO_ODR_ODR13;

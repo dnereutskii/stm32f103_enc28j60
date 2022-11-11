@@ -1,16 +1,43 @@
 #include "stm32f1xx.h"
 #include "buart.h"
 
-uint8_t uart_rxrd;
-uint8_t uart_rxwr;
-uint8_t uart_rx[UART_BUFSIZE];
+/**
+ * @brief GPIO initialization for USART2
+ * 
+ * @note PA2 - TX
+ *       PA3 - RX
+ * 
+ * @param None
+ * @return None
+ */
+static void gpio_init(void);
 
-uint8_t uart_txrd;
-uint8_t uart_txwr;
-uint8_t uart_tx[UART_BUFSIZE];
+/**
+ * @brief USART2 module initialization
+ * 
+ * @param None
+ * @return None
+ */
+static void usart2_init(void);
+
+/**
+ * @brief USART2 enable
+ * 
+ * @param None
+ * @return None
+ */
+static void usart2_enable(void);
+
+static uint8_t uart_rxrd;
+static uint8_t uart_rxwr;
+static uint8_t uart_rx[UART_BUFSIZE];
+
+static uint8_t uart_txrd;
+static uint8_t uart_txwr;
+static uint8_t uart_tx[UART_BUFSIZE];
 
 
-USART1_IRQHandler(USART_RXC_vect)
+void USART2_IRQHandler(void)//USART_RXC_vect
 {
 	uint8_t byte;
 	uint8_t wr = (uart_rxwr + 1) & UART_BUFEND;
@@ -65,5 +92,39 @@ void uart_write(uint8_t byte)
 
 void uart_init(void)
 {
+    gpio_init();/* GPIO Init */
+    usart2_init();/* USART init */
+}
 
+static void gpio_init(void)
+{
+    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN | /* GPIOA clock enable */
+                    RCC_APB2ENR_AFIOEN;  /* AF clock enable*/
+
+    GPIOA->CRL &= ~(GPIO_CRL_CNF2 | GPIO_CRL_MODE2 |
+                    GPIO_CRL_CNF3 | GPIO_CRL_MODE3); /* Clear bits */
+    
+    GPIOA->CRL |= GPIO_CRL_MODE2 | GPIO_CRL_CNF2_1; /* PA2 - AF output push-pull */
+    GPIOA->CRL |= GPIO_CRL_MODE3 | GPIO_CRL_CNF3_1; /* PA3 - AF output push-pull */
+}
+
+static void usart2_init(void)
+{
+    RCC->APB1ENR |= RCC_APB1ENR_USART2EN; /* enable USART2 clock */
+
+    USART2->CR1 = 0;                  /* Clear CR1 */
+    USART2->CR1 &= ~USART_CR1_M;      /* 1 start bit, 8-bit length */
+    USART2->CR1 |= USART_CR1_TXEIE |  /* TXE interrupt enable */
+                   USART_CR1_RXNEIE | /* RXNE Interrupt Enable */
+                   USART_CR1_TE |     /* Transmitter Enable*/
+                   USART_CR1_RE;      /* Receiver Enable*/
+
+    USART2->CR2 &= ~USART_CR2_STOP;   /* 1 stop bit */
+
+    
+}
+
+static void usart2_enable(void)
+{
+    USART2->CR1 |= USART_CR1_UE;
 }

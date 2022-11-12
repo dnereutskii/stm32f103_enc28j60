@@ -28,37 +28,41 @@ static void usart2_init(void);
  */
 static void usart2_enable(void);
 
-static uint8_t uart_rxrd;
-static uint8_t uart_rxwr;
-static uint8_t uart_rx[UART_BUFSIZE];
+static uint8_t uart_rxrd;               /*!< */
+static uint8_t uart_rxwr;               /*!< */
+static uint8_t uart_rx[UART_BUFSIZE];   /*!< */
 
-static uint8_t uart_txrd;
-static uint8_t uart_txwr;
-static uint8_t uart_tx[UART_BUFSIZE];
+static uint8_t uart_txrd;               /*!< Index where interrupt get data */
+static uint8_t uart_txwr;               /*!< Index where we append data */
+static uint8_t uart_tx[UART_BUFSIZE];   /*!< Transmit buffer */
 
 
 void USART2_IRQHandler(void)//USART_RXC_vect
 {
-	uint8_t byte;
-	uint8_t wr = (uart_rxwr + 1) & UART_BUFEND;
-	byte = UDR;
-	if(wr != uart_rxrd)
-	{
-		uart_rx[uart_rxwr] = byte;
-		uart_rxwr = wr;
-	}
-}
+    if (USART2->SR & USART_SR_TXE) /* It is cleared by a write to the USART_DR register */
+    {
+        uint8_t rd = uart_txrd;
+        if(rd != uart_txwr)
+        {
+            USART2->DR = uart_tx[rd];
+            uart_txrd = (rd + 1) & UART_BUFEND;
+            return;
+        }
+        // UCSRB &= ~(1<<UDRIE);
+        USART2->CR1 &= ~USART_CR1_TXEIE |  /* TXE interrupt disable */
+    }
 
-USART1_IRQHandler(USART_UDRE_vect)
-{
-	uint8_t rd = uart_txrd;
-	if(rd != uart_txwr)
-	{
-		UDR = uart_tx[rd];
-		uart_txrd = (rd+1) & UART_BUFEND;
-		return;
-	}
-	UCSRB &= ~(1<<UDRIE);
+    if (USART2->SR & USART_SR_RXNE) /* It is cleared by a read to the USART_DR register */
+    {
+        uint8_t byte;
+        uint8_t wr = (uart_rxwr + 1) & UART_BUFEND;
+        byte = USART2->DR;
+        if(wr != uart_rxrd)
+        {
+            uart_rx[uart_rxwr] = byte;
+            uart_rxwr = wr;
+        }
+    }
 }
 
 uint8_t uart_rx_count()
@@ -81,12 +85,13 @@ uint8_t uart_read()
 
 void uart_write(uint8_t byte)
 {
-	uint8_t wr = (uart_txwr+1) & UART_BUFEND;
+	uint8_t wr = (uart_txwr + 1) & UART_BUFEND; /* Check if buffer over  */
 	if(wr != uart_txrd)
 	{
 		uart_tx[uart_txwr] = byte;
 		uart_txwr = wr;
-		UCSRB |= (1<<UDRIE);
+		// UCSRB |= (1<<UDRIE);
+        USART2->CR1 |= USART_CR1_TXEIE |  /* TXE interrupt enable */
 	}
 }
 
@@ -114,14 +119,14 @@ static void usart2_init(void)
 
     USART2->CR1 = 0;                  /* Clear CR1 */
     USART2->CR1 &= ~USART_CR1_M;      /* 1 start bit, 8-bit length */
-    USART2->CR1 |= USART_CR1_TXEIE |  /* TXE interrupt enable */
+    USART2->CR1 |= /*USART_CR1_TXEIE |  /* TXE interrupt enable */
                    USART_CR1_RXNEIE | /* RXNE Interrupt Enable */
                    USART_CR1_TE |     /* Transmitter Enable*/
                    USART_CR1_RE;      /* Receiver Enable*/
 
     USART2->CR2 &= ~USART_CR2_STOP;   /* 1 stop bit */
 
-    
+    usart2_enable();
 }
 
 static void usart2_enable(void)

@@ -7,6 +7,7 @@ SOURCES += cmsis/src/system_stm32f1xx.c
 SOURCES += core/enc28j60/enc28j60.c
 SOURCES += core/enc28j60/spi/enc28j60_spi.c
 SOURCES += core/delay/delay.c
+SOURCES += core/buart/buart.c
 SOURCES += core/tcp_ip/1network/ethernet.c
 SOURCES += core/tcp_ip/1network/arp.c
 SOURCES += core/tcp_ip/2internet/ip.c
@@ -42,6 +43,8 @@ CFLAGS += -I ./cmsis/inc/
 CFLAGS += -I ./core
 # delay header
 CFLAGS += -I ./core/delay/
+# burat header
+CFLAGS += -I ./core/buart/
 # enc28j60 headers 
 CFLAGS += -I ./core/enc28j60/
 CFLAGS += -I ./core/enc28j60/spi

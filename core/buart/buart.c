@@ -15,10 +15,10 @@ static void gpio_init(void);
 /**
  * @brief USART2 module initialization
  * 
- * @param None
+ * @param [in] baudrate USART2 baudrate
  * @return None
  */
-static void usart2_init(void);
+static void usart2_init(uint16_t baudrate);
 
 /**
  * @brief USART2 enable
@@ -36,7 +36,6 @@ static uint8_t uart_txrd;               /*!< Index where interrupt get data */
 static uint8_t uart_txwr;               /*!< Index where we append data */
 static uint8_t uart_tx[UART_BUFSIZE];   /*!< Transmit buffer */
 
-
 void USART2_IRQHandler(void)//USART_RXC_vect
 {
     if (USART2->SR & USART_SR_TXE) /* It is cleared by a write to the USART_DR register */
@@ -49,7 +48,7 @@ void USART2_IRQHandler(void)//USART_RXC_vect
             return;
         }
         // UCSRB &= ~(1<<UDRIE);
-        USART2->CR1 &= ~USART_CR1_TXEIE |  /* TXE interrupt disable */
+        USART2->CR1 &= ~USART_CR1_TXEIE;  /* TXE interrupt disable */
     }
 
     if (USART2->SR & USART_SR_RXNE) /* It is cleared by a read to the USART_DR register */
@@ -91,14 +90,14 @@ void uart_write(uint8_t byte)
 		uart_tx[uart_txwr] = byte;
 		uart_txwr = wr;
 		// UCSRB |= (1<<UDRIE);
-        USART2->CR1 |= USART_CR1_TXEIE |  /* TXE interrupt enable */
+        USART2->CR1 |= USART_CR1_TXEIE;  /* TXE interrupt enable */
 	}
 }
 
-void uart_init(void)
+void uart_init(uint16_t baudrate)
 {
     gpio_init();/* GPIO Init */
-    usart2_init();/* USART init */
+    usart2_init(baudrate);/* USART init */
 }
 
 static void gpio_init(void)
@@ -113,19 +112,21 @@ static void gpio_init(void)
     GPIOA->CRL |= GPIO_CRL_MODE3 | GPIO_CRL_CNF3_1; /* PA3 - AF output push-pull */
 }
 
-static void usart2_init(void)
+static void usart2_init(uint16_t baudrate)
 {
     RCC->APB1ENR |= RCC_APB1ENR_USART2EN; /* enable USART2 clock */
 
     USART2->CR1 = 0;                  /* Clear CR1 */
     USART2->CR1 &= ~USART_CR1_M;      /* 1 start bit, 8-bit length */
-    USART2->CR1 |= /*USART_CR1_TXEIE |  /* TXE interrupt enable */
+    USART2->CR1 |= /*USART_CR1_TXEIE |   TXE interrupt enable */
                    USART_CR1_RXNEIE | /* RXNE Interrupt Enable */
                    USART_CR1_TE |     /* Transmitter Enable*/
                    USART_CR1_RE;      /* Receiver Enable*/
 
     USART2->CR2 &= ~USART_CR2_STOP;   /* 1 stop bit */
 
+    USART2->BRR = baudrate;
+    NVIC_EnableIRQ(USART2_IRQn);
     usart2_enable();
 }
 

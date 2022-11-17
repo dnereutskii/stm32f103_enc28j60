@@ -30,7 +30,7 @@ static void usart2_enable(void);
 
 static uint8_t uart_rxrd;               /*!< */
 static uint8_t uart_rxwr;               /*!< */
-static uint8_t uart_rx[UART_BUFSIZE];   /*!< */
+static uint8_t uart_rx[UART_BUFSIZE];   /*!< Receive buffer */
 
 static uint8_t uart_txrd;               /*!< Index where interrupt get data */
 static uint8_t uart_txwr;               /*!< Index where we append data */
@@ -41,7 +41,7 @@ void USART2_IRQHandler(void)//USART_RXC_vect
     if (USART2->SR & USART_SR_TXE) /* It is cleared by a write to the USART_DR register */
     {
         uint8_t rd = uart_txrd;
-        if(rd != uart_txwr)
+        if(rd != uart_txwr) /* There are data to be sent */
         {
             USART2->DR = uart_tx[rd];
             uart_txrd = (rd + 1) & UART_BUFEND;
@@ -82,9 +82,9 @@ uint8_t uart_read()
 	return 0;
 }
 
-void uart_write(uint8_t byte)
+void uart_write_byte(uint8_t byte)
 {
-	uint8_t wr = (uart_txwr + 1) & UART_BUFEND; /* Check if buffer over  */
+	uint8_t wr = (uart_txwr + 1) & UART_BUFEND; /* Check if buffer over */
 	if(wr != uart_txrd)
 	{
 		uart_tx[uart_txwr] = byte;
@@ -92,6 +92,24 @@ void uart_write(uint8_t byte)
 		// UCSRB |= (1<<UDRIE);
         USART2->CR1 |= USART_CR1_TXEIE;  /* TXE interrupt enable */
 	}
+}
+
+void uart_write_string(const uint8_t *str)
+{
+    while (*str)
+    {
+        uart_write_byte(*str);
+        str++;
+    }
+}
+
+void uart_write_data(const uint8_t *array, uint8_t len)
+{
+    uint8_t i;
+    for (i = 0; i < len; i++)
+    {
+        uart_write_byte(array[i]);
+    }
 }
 
 void uart_init(uint16_t baudrate)

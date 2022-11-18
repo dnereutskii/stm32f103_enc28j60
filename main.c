@@ -27,7 +27,7 @@ void SysTick_Handler()
 int main()
 {
     // uint8_t enc_revid = 0;
-    uint8_t str[] = "str";
+    uint8_t str[] = "str1\r\n";
     clock_init();
     swd_init();
     led_init();
@@ -42,10 +42,10 @@ int main()
         // lan_poll();
         GPIOC->BSRR = GPIO_BSRR_BR13;//on led
         // GPIOC->ODR |= GPIO_ODR_ODR13;
-        delay_ms(500);
+        delay_ms(200);
         // uart_write('g');
-        // uart_write_string(str);
-        uart_write_data(str, sizeof(str)/sizeof(uint8_t));
+        uart_write_string(str);
+        // uart_write_data(str, sizeof(str)/sizeof(uint8_t));
         GPIOC->BSRR = GPIO_BSRR_BS13;//off led
         // GPIOC->ODR &= ~GPIO_ODR_ODR13;
         delay_ms(500);

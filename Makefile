@@ -25,11 +25,14 @@ PROJECT ?= test
 CC = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
 SIZE = arm-none-eabi-size
+DBG = arm-none-eabi-gdb
 
 # path to st-flash (or should be specified in PATH)
 ST_FLASH ?= st-flash
 # ST_FLASH ?= ST-LINK_CLI
 ST_INFO = st-info
+
+OCD = openocd
 
 # specify compiler flags
 CFLAGS  = -g -O0 -Wall
@@ -75,6 +78,11 @@ burn:
 	$(ST_FLASH) write $(PROJECT).bin 0x8000000
 # $(ST_FLASH) -c SWD -P $(PROJECT).hex 0x8000000 -Rst
 
+burnocd:
+	$(OCD) -f /usr/share/openocd/scripts/interface/stlink-v2.cfg \
+	-f /usr/share/openocd/scripts/target/stm32f1x.cfg -c \
+	"init; reset halt; flash write_image erase test.hex; reset; exit"
+
 # size info
 size:
 	@$(SIZE) -B -d ./$(PROJECT).elf
@@ -82,4 +90,9 @@ size:
 # MCU info
 info:
 	@$(ST_INFO) --probe
+
+debug:
+	$(DBG) $(PROJECT).elf \
+	-ex 'target remote localhost:3333' \
+	-ex 'monitor reset halt'
 

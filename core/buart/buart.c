@@ -28,11 +28,11 @@ static void usart2_init(uint16_t baudrate);
  */
 static void usart2_enable(void);
 
-static uint8_t uart_rxrd;               /*!< */
-static uint8_t uart_rxwr;               /*!< */
+static uint8_t uart_rxrd;               /*!< Index where we get data */
+static uint8_t uart_rxwr;               /*!< Index where interrupt appends data */
 static uint8_t uart_rx[UART_BUFSIZE];   /*!< Receive buffer */
 
-static uint8_t uart_txrd;               /*!< Index where interrupt get data */
+static uint8_t uart_txrd;               /*!< Index where interrupt gets data */
 static uint8_t uart_txwr;               /*!< Index where we append data */
 static uint8_t uart_tx[UART_BUFSIZE];   /*!< Transmit buffer */
 
@@ -64,7 +64,7 @@ void USART2_IRQHandler(void)//USART_RXC_vect
     }
 }
 
-uint8_t uart_rx_count()
+uint8_t uart_rx_count(void)
 {
 	return (uart_rxwr-uart_rxrd) & UART_BUFEND;
 }
@@ -85,7 +85,7 @@ uint8_t uart_read()
 void uart_write_byte(uint8_t byte)
 {
 	uint8_t wr = (uart_txwr + 1) & UART_BUFEND; /* Check if buffer over */
-	if(wr != uart_txrd)
+	if(wr != uart_txrd) /* anti-rewriting */
 	{
 		uart_tx[uart_txwr] = byte;
 		uart_txwr = wr;

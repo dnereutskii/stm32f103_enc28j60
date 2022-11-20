@@ -191,6 +191,8 @@ void enc28j60_write_phy(uint8_t adr, uint16_t data)
 
 void enc28j60_init(uint8_t *macadr)
 {
+    uint8_t erevid = 0;
+
 	enc28j60_spi_init();/*Initialize SPI*/
 	enc28j60_soft_reset();/*Reset ENC28J60*/
 
@@ -238,6 +240,7 @@ void enc28j60_init(uint8_t *macadr)
     );
 	
 	enc28j60_bfs(ECON1, ECON1_RXEN);/*Enable Rx packets*/
+    erevid = enc28j60_rcr(EREVID);
 }
 
 void enc28j60_send_packet(uint8_t *data, uint16_t len)

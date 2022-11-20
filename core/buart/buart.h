@@ -9,6 +9,13 @@
 #define UART_BUFEND          (UART_BUFSIZE-1)
 
 void uart_init(uint16_t baudrate);
+
+/**
+ * @brief Get unread data status 
+ * 
+ * @param None
+ * @return Count of unread data from RX buffer
+ */
 uint8_t uart_rx_count();
 uint8_t uart_read();
 void uart_write_byte(uint8_t byte);

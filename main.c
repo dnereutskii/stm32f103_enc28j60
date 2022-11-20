@@ -33,8 +33,7 @@ int main()
     led_init();
     delay_init();
     uart_init(UART_RATE_9600);
-    // lan_init();
-    // uart_init();
+    lan_init();
     // enc28j60_init(mac_addr);
     // enc_revid = enc28j60_rcr(EREVID);
     while(1)
@@ -42,7 +41,7 @@ int main()
         // lan_poll();
         GPIOC->BSRR = GPIO_BSRR_BR13;//on led
         // GPIOC->ODR |= GPIO_ODR_ODR13;
-        delay_ms(200);
+        delay_ms(500);
         // uart_write('g');
         uart_write_string(str);
         // uart_write_data(str, sizeof(str)/sizeof(uint8_t));

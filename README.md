@@ -6,5 +6,10 @@
 ## Burn firmware
 openocd -f /usr/share/openocd/scripts/interface/stlink-v2.cfg -f /usr/share/openocd/scripts/target/stm32f1x.cfg -c "init; reset halt; flash write_image erase test.hex; reset; exit"
 
-### Fire up OpenOCD
+## Fire up OpenOCD
+
+### Linux
 openocd -f /usr/share/openocd/scripts/interface/stlink-v2.cfg -f /usr/share/openocd/scripts/target/stm32f1x.cfg
+
+### Windows
+openocd -f "C:/xpack-openocd-0.11.0-5/scripts/interface/stlink-v2.cfg" -f "C:/xpack-openocd-0.11.0-5/scripts/target/stm32f1x.cfg"

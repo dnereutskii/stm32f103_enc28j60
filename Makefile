@@ -86,11 +86,16 @@ ocd_burn:
 	-f /usr/share/openocd/scripts/target/stm32f1x.cfg -c \
 	"init; reset halt; flash write_image erase test.hex; reset; exit"
 
-ocd_debug:
+debug:
 	$(DBG) $(PROJECT).elf \
 	-ex 'target remote localhost:3333' \
 	-ex 'monitor reset halt'
 # -ex 'tui enable'
+
+ocd_open:
+	$(OCD) -f /usr/share/openocd/scripts/interface/stlink-v2.cfg \
+	-f /usr/share/openocd/scripts/target/stm32f1x.cfg \
+# -l ./ocd_log &
 
 ocd_open_win:
 	$(OCD) -f "C:/xpack-openocd-0.11.0-5/scripts/interface/stlink-v2.cfg" \

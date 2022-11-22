@@ -2,6 +2,7 @@
 #include "ethernet.h"
 #include "ip.h"
 #include "udp.h"
+#include "buart.h"
 
 void udp_filter(eth_frame_t *frame, uint16_t len)
 {
@@ -50,16 +51,16 @@ void udp_packet(eth_frame_t *frame, uint16_t len)
 
 	for(i = 0; i < len; ++i)
     {
-		// uart_write(data[i]);
+		uart_write_byte(data[i]);
     }
 
-	// count = uart_rx_count();
+	count = uart_rx_count();
     count = 10;
 	if(count)
 	{
 		for(i = 0; i < count; ++i)
         {
-			// data[i] = uart_read();
+			data[i] = uart_read();
 			data[i] = 'h';
         }
 		udp_reply(frame, count);

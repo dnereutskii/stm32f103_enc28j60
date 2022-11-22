@@ -193,10 +193,11 @@ void enc28j60_init(uint8_t *macadr)
 {
     uint8_t erevid = 0;
 
-	enc28j60_spi_init();/*Initialize SPI*/
-	enc28j60_soft_reset();/*Reset ENC28J60*/
+	enc28j60_spi_init();    /* Initialize SPI */
+    enc28j60_spi_enable();
+	enc28j60_soft_reset();  /* Reset ENC28J60 */
 
-	/*Setup Rx/Tx buffer*/
+	/* Setup Rx/Tx buffer */
 	enc28j60_wcr16(ERXST, ENC28J60_RXSTART);
 	enc28j60_wcr16(ERXRDPT, ENC28J60_RXSTART);
 	enc28j60_wcr16(ERXND, ENC28J60_RXEND);

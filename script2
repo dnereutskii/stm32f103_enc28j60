@@ -1,0 +1,33 @@
+#!/bin/bash
+#Script OCD burn
+
+res=$(netstat -an | grep 127.0.0.1:4444)
+
+#echo $res
+
+if [ -n "$res" ] # If OpenOCD was opened 
+then
+    echo "Yes"
+    { 
+        echo "init"; 
+        echo "reset halt"; 
+        echo "flash write_image erase test.hex"; 
+        echo "reset"; 
+        #echo "shutdown"
+        echo "exit"; 
+        sleep 1; 
+    } | telnet localhost 4444
+else
+    echo "No"
+    openocd -f /usr/share/openocd/scripts/interface/stlink-v2.cfg -f /usr/share/openocd/scripts/target/stm32f1x.cfg -l ocd_log;  
+    { 
+        echo "init"; 
+        echo "reset halt"; 
+        echo "flash write_image erase test.hex"; 
+        #echo "reset"; 
+        echo "shutdown"
+        echo "exit"; 
+        sleep 1; 
+    } | telnet localhost 4444
+fi
+

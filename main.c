@@ -3,6 +3,8 @@
 #include "enc28j60.h"
 #include "lan.h"
 #include "buart.h"
+#include "ethernet.h"
+#include "ip.h"
 
 #define ONE_MS      1000U       /*Delay milliseconds const*/
 #define ONE_US      1000000U    /*Delay microseconds const*/
@@ -26,28 +28,23 @@ void SysTick_Handler()
 
 int main()
 {
-    // uint8_t enc_revid = 0;
-    // uint8_t str[] = "str1\r\n";
+    uint8_t ethsize = sizeof(ip_packet_t);
+    
     clock_init();
     swd_init();
     led_init();
     delay_init();
     uart_init(UART_RATE_9600);
     lan_init();
-    // enc28j60_init(mac_addr);
-    // enc_revid = enc28j60_rcr(EREVID);
+    
+    uart_write_byte(ethsize);
     while(1)
     {
-        lan_poll();
-        // GPIOC->BSRR = GPIO_BSRR_BR13;//on led
-        // GPIOC->ODR |= GPIO_ODR_ODR13;
-        // delay_ms(500);
-        // uart_write('g');
-        // uart_write_string(str);
-        // uart_write_data(str, sizeof(str)/sizeof(uint8_t));
-        // GPIOC->BSRR = GPIO_BSRR_BS13;//off led
-        // GPIOC->ODR &= ~GPIO_ODR_ODR13;
-        // delay_ms(500);
+        //~ lan_poll();
+        GPIOC->BSRR = GPIO_BSRR_BR13;//on led
+        delay_ms(100);
+        GPIOC->BSRR = GPIO_BSRR_BS13;//off led
+        delay_ms(500);
     };
 
     return 0;

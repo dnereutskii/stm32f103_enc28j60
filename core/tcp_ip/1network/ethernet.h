@@ -19,14 +19,14 @@
 #define ETH_TYPE_ARP		htons(0x0806)
 #define ETH_TYPE_IP			htons(0x0800)
 
-#pragma pack(push, 1)
+//#pragma pack(push, 1)
 typedef struct eth_frame {
     uint8_t to_addr[6];
     uint8_t from_addr[6];
     uint16_t type;
     uint8_t data[];
 } eth_frame_t;
-#pragma pack(pop)
+//#pragma pack(pop)
 
 extern uint8_t mac_addr[];
 

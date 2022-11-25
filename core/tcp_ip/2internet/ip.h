@@ -5,7 +5,7 @@
 #define IP_PROTOCOL_TCP     6
 #define IP_PROTOCOL_UDP     17
 
-#pragma pack(push, 1)
+//#pragma pack(push, 1)
 typedef struct ip_packet {
     uint8_t ver_head_len;
     uint8_t tos;
@@ -19,7 +19,7 @@ typedef struct ip_packet {
     uint32_t to_addr;
     uint8_t data[];
 } ip_packet_t;
-#pragma pack(pop)
+//#pragma pack(pop)
 
 extern uint32_t ip_addr;
 

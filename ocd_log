@@ -5,7 +5,7 @@ Info : Listening on port 6666 for tcl connections
 Info : Listening on port 4444 for telnet connections
 Info : clock speed 1000 kHz
 Info : STLINK V2J40S7 (API v2) VID:PID 0483:3748
-Info : Target voltage: 3.235403
+Info : Target voltage: 3.227423
 Info : stm32f1x.cpu: hardware has 6 breakpoints, 4 watchpoints
 Info : starting gdb server for stm32f1x.cpu on 3333
 Info : Listening on port 3333 for gdb connections

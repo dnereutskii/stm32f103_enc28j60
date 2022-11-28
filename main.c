@@ -5,6 +5,7 @@
 #include "buart.h"
 #include "ethernet.h"
 #include "ip.h"
+#include "arp.h"
 
 #define ONE_MS      1000U       /*Delay milliseconds const*/
 #define ONE_US      1000000U    /*Delay microseconds const*/
@@ -28,7 +29,7 @@ void SysTick_Handler()
 
 int main()
 {
-    uint8_t ethsize = sizeof(ip_packet_t);
+    uint8_t ethsize = sizeof(arp_message_t);
     
     clock_init();
     swd_init();
@@ -40,11 +41,11 @@ int main()
     uart_write_byte(ethsize);
     while(1)
     {
-        //~ lan_poll();
-        GPIOC->BSRR = GPIO_BSRR_BR13;//on led
-        delay_ms(100);
-        GPIOC->BSRR = GPIO_BSRR_BS13;//off led
-        delay_ms(500);
+        lan_poll();
+        // GPIOC->BSRR = GPIO_BSRR_BR13;//on led
+        // delay_ms(100);
+        // GPIOC->BSRR = GPIO_BSRR_BS13;//off led
+        // delay_ms(500);
     };
 
     return 0;

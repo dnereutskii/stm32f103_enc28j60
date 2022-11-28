@@ -29,7 +29,7 @@ void SysTick_Handler()
 
 int main()
 {
-    uint8_t ethsize = sizeof(arp_message_t);
+    // uint8_t ethsize = sizeof(arp_message_t);
     
     clock_init();
     swd_init();

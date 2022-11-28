@@ -191,7 +191,7 @@ void enc28j60_write_phy(uint8_t adr, uint16_t data)
 
 void enc28j60_init(uint8_t *macadr)
 {
-    uint8_t erevid = 0;
+    // uint8_t erevid = 0;
 
 	enc28j60_spi_init();    /* Initialize SPI */
     enc28j60_spi_enable();
@@ -221,12 +221,12 @@ void enc28j60_init(uint8_t *macadr)
 	enc28j60_wcr(MABBIPG, 0x15);/*Back-to-Back Inter-Packet Gap*/
 	enc28j60_wcr(MAIPGL, 0x12);/*Non-Back-to-Back Inter-Packet Gap*/
 	enc28j60_wcr(MAIPGH, 0x0c);/*Non-Back-to-Back Inter-Packet Gap half duplex*/
-	enc28j60_wcr(MAADR6, macadr[0]);/*Set MAC address*/
-	enc28j60_wcr(MAADR5, macadr[1]);
-	enc28j60_wcr(MAADR4, macadr[2]);
-	enc28j60_wcr(MAADR3, macadr[3]);
-	enc28j60_wcr(MAADR2, macadr[4]);
-	enc28j60_wcr(MAADR1, macadr[5]);
+	enc28j60_wcr(MAADR1, macadr[0]);/*Set MAC address*/
+	enc28j60_wcr(MAADR2, macadr[1]);
+	enc28j60_wcr(MAADR3, macadr[2]);
+	enc28j60_wcr(MAADR4, macadr[3]);
+	enc28j60_wcr(MAADR5, macadr[4]);
+	enc28j60_wcr(MAADR6, macadr[5]);
 
 	/*Setup PHY*/
 	enc28j60_write_phy(PHCON1, PHCON1_PDPXMD);/*Force full-duplex mode*/
@@ -241,7 +241,7 @@ void enc28j60_init(uint8_t *macadr)
     );
 	
 	enc28j60_bfs(ECON1, ECON1_RXEN);/*Enable Rx packets*/
-    erevid = enc28j60_rcr(EREVID);
+    // erevid = enc28j60_rcr(EREVID);
 }
 
 void enc28j60_send_packet(uint8_t *data, uint16_t len)

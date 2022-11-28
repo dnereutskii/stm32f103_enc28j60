@@ -13,7 +13,7 @@ void lan_init()
 void lan_poll()
 {
 	uint16_t len;
-	eth_frame_t *frame = (void*)net_buf;
+	eth_frame_t *frame = (eth_frame_t *)net_buf;
 	
 	while((len = enc28j60_recv_packet(net_buf, sizeof(net_buf))))
     {

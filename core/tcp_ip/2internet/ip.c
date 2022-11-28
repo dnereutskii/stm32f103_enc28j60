@@ -42,17 +42,16 @@ void ip_reply(eth_frame_t *frame, uint16_t len)
 	eth_reply((void*)frame, len + sizeof(ip_packet_t));
 }
 
-
 void ip_filter(eth_frame_t *frame, uint16_t len)
 {
     ip_packet_t *packet = (void*)(frame->data);
         
-    //if(len >= sizeof(ip_packet_t))
-    //{
+    if(len >= sizeof(ip_packet_t))
+    {
         if( (packet->ver_head_len == 0x45) &&
             (packet->to_addr == ip_addr) )
         {
-            len = ntohs(packet->total_len) - sizeof(ip_packet_t);
+            len = ntohs(packet->total_len) - sizeof(ip_packet_t); /*???*/
 
             switch(packet->protocol)
             {
@@ -66,5 +65,5 @@ void ip_filter(eth_frame_t *frame, uint16_t len)
                     break;
             }
         }
-    //}
+    }
 }

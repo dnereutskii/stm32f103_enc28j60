@@ -15,13 +15,6 @@ void udp_filter(eth_frame_t *frame, uint16_t len)
     }
 }
 
-/**
- * @brief Synthesis of UDP-datagram
- * 
- * @param frame Ethernet frame pointer
- * @param len   Data length
- * @return None
- */
 void udp_reply(eth_frame_t *frame, uint16_t len)
 {
     ip_packet_t *ip = (void*)(frame->data);
@@ -44,25 +37,23 @@ void udp_reply(eth_frame_t *frame, uint16_t len)
 
 void udp_packet(eth_frame_t *frame, uint16_t len)
 {
-	ip_packet_t *ip = (void*)(frame->data);
-	udp_packet_t *udp = (void*)(ip->data);
-	uint8_t *data = udp->data;
-	uint8_t i, count;
+    ip_packet_t *ip = (ip_packet_t*)(frame->data);
+    udp_packet_t *udp = (udp_packet_t*)(ip->data);
+    uint8_t *data = udp->data;
+    uint8_t count;
 
-	for(i = 0; i < len; ++i)
+    for(uint8_t i = 0; i < len; ++i)
     {
-		uart_write_byte(data[i]);
+        uart_write_byte(data[i]);
     }
 
-	count = uart_rx_count();
-    count = 10;
-	if(count)
-	{
-		for(i = 0; i < count; ++i)
+    count = uart_rx_count();
+    if(count)
+    {
+        for(uint8_t i = 0; i < count; ++i)
         {
-			data[i] = uart_read();
-			data[i] = 'h';
+        	data[i] = uart_read();
         }
-		udp_reply(frame, count);
+        udp_reply(frame, count);
 	}
 }

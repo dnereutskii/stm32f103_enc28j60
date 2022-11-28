@@ -14,7 +14,7 @@ void eth_reply(eth_frame_t *frame, uint16_t len)
 {
 	memcpy(frame->to_addr, frame->from_addr, 6);
 	memcpy(frame->from_addr, mac_addr, 6);
-	enc28j60_send_packet((void*)frame, len + sizeof(eth_frame_t));
+	enc28j60_send_packet((uint8_t *)frame, len + sizeof(eth_frame_t));
 }
 
 

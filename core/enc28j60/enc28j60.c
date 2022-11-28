@@ -269,7 +269,10 @@ void enc28j60_send_packet(uint8_t *data, uint16_t len)
 
 uint16_t enc28j60_recv_packet(uint8_t *buf, uint16_t buflen)
 {
-	uint16_t len = 0, rxlen, status, temp;
+	uint16_t len = 0;
+    uint16_t rxlen; 
+    uint16_t status; 
+    uint16_t temp;
 
 	if(enc28j60_rcr(EPKTCNT))
 	{
@@ -279,9 +282,9 @@ uint16_t enc28j60_recv_packet(uint8_t *buf, uint16_t buflen)
 		enc28j60_read_buffer((void*)&rxlen, sizeof(rxlen));
 		enc28j60_read_buffer((void*)&status, sizeof(status));
 
-		if(status & 0x80) //success
+		if(status & 0x80) /* Received Ok: packet had a valid CRC and no symbol errors */
 		{
-			len = rxlen - 4; //throw out crc
+			len = rxlen - 4; /* Throw out crc */
 			if(len > buflen)
             {
                 len = buflen;
@@ -289,12 +292,11 @@ uint16_t enc28j60_recv_packet(uint8_t *buf, uint16_t buflen)
 			enc28j60_read_buffer(buf, len);	
 		}
 
-		// Set Rx read pointer to next packet
+		/* Set Rx read pointer to next packet */
 		temp = (enc28j60_rxrdpt - 1) & ENC28J60_BUFEND;
 		enc28j60_wcr16(ERXRDPT, temp);
-
-		// Decrement packet counter
-		enc28j60_bfs(ECON2, ECON2_PKTDEC);
+		
+		enc28j60_bfs(ECON2, ECON2_PKTDEC); /* Decrement packet counter */
 	}
 
 	return len;

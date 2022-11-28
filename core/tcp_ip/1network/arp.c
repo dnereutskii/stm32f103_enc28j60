@@ -6,7 +6,7 @@
 
 void arp_filter(eth_frame_t *frame, uint16_t len)
 {
-    arp_message_t *msg = (void*)(frame->data);
+    arp_message_t *msg = (arp_message_t *)(frame->data);
 
     if(len >= sizeof(arp_message_t))
     {

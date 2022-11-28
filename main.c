@@ -38,7 +38,6 @@ int main()
     uart_init(UART_RATE_9600);
     lan_init();
     
-    uart_write_byte(ethsize);
     while(1)
     {
         lan_poll();

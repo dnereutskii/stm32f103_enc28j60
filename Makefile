@@ -8,12 +8,12 @@ SOURCES += core/enc28j60/enc28j60.c
 SOURCES += core/enc28j60/spi/enc28j60_spi.c
 SOURCES += core/delay/delay.c
 SOURCES += core/buart/buart.c
+SOURCES += core/tcp_ip/lan.c
 SOURCES += core/tcp_ip/1network/ethernet.c
 SOURCES += core/tcp_ip/1network/arp.c
 SOURCES += core/tcp_ip/2internet/ip.c
 SOURCES += core/tcp_ip/2internet/icmp.c
 SOURCES += core/tcp_ip/3transport/udp.c
-SOURCES += core/tcp_ip/4application/lan.c
 
 # add startup file to build
 SOURCES += ./startup/startup_stm32f103xb.s

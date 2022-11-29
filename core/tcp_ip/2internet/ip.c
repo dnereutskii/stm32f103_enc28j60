@@ -46,24 +46,23 @@ void ip_filter(eth_frame_t *frame, uint16_t len)
 {
     ip_packet_t *packet = (void*)(frame->data);
         
-    if(len >= sizeof(ip_packet_t))
-    {
-        if( (packet->ver_head_len == 0x45) &&
-            (packet->to_addr == ip_addr) )
-        {
-            len = ntohs(packet->total_len) - sizeof(ip_packet_t); /*???*/
+    if (len < sizeof(ip_packet_t)) return;
 
-            switch(packet->protocol)
-            {
+    if( (packet->ver_head_len == 0x45) &&
+        (packet->to_addr == ip_addr) )
+    {
+        len = ntohs(packet->total_len) - sizeof(ip_packet_t); /*???*/
+
+        switch(packet->protocol)
+        {
 #ifdef WITH_ICMP
-                case IP_PROTOCOL_ICMP:
-                    icmp_filter(frame, len);
-                    break;
+            case IP_PROTOCOL_ICMP:
+                icmp_filter(frame, len);
+                break;
 #endif
-                case IP_PROTOCOL_UDP:
-                    udp_filter(frame, len);
-                    break;
-            }
+            case IP_PROTOCOL_UDP:
+                udp_filter(frame, len);
+                break;
         }
     }
 }

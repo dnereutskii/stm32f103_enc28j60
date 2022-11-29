@@ -46,6 +46,7 @@ void udp_packet(eth_frame_t *frame, uint16_t len)
     {
         uart_write_byte(data[i]);
     }
+    uart_write_byte('\r');
 
     count = uart_rx_count();
     if(count)

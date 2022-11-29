@@ -6,9 +6,7 @@
 #include "enc28j60.h"
 #include "lan.h"
 
-
 uint8_t mac_addr[] = MAC_ADDR;
-
 
 void eth_reply(eth_frame_t *frame, uint16_t len)
 {
@@ -20,16 +18,14 @@ void eth_reply(eth_frame_t *frame, uint16_t len)
 
 void eth_filter(eth_frame_t *frame, uint16_t len)
 {
-    if(len >= sizeof(eth_frame_t))
+    if (len < sizeof(eth_frame_t)) return;
+    switch(frame->type)
     {
-        switch(frame->type)
-        {
-            case ETH_TYPE_ARP:
-                arp_filter(frame, len - sizeof(eth_frame_t));
-                break;
-            case ETH_TYPE_IP:
-                ip_filter(frame, len - sizeof(eth_frame_t));
-                break;
-        }
+        case ETH_TYPE_ARP:
+            arp_filter(frame, len - sizeof(eth_frame_t));
+            break;
+        case ETH_TYPE_IP:
+            ip_filter(frame, len - sizeof(eth_frame_t));
+            break;
     }
 }

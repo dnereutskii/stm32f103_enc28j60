@@ -1,73 +1,79 @@
 # path to STM32F103 standard peripheral library
 # STD_PERIPH_LIBS ?= ./STM32F10x_StdPeriph_Lib_V3.5.0/
 
-# list of source files
-SOURCES  = main.c
-SOURCES += cmsis/src/system_stm32f1xx.c
-SOURCES += core/enc28j60/enc28j60.c
-SOURCES += core/enc28j60/spi/enc28j60_spi.c
-SOURCES += core/delay/delay.c
-SOURCES += core/buart/buart.c
-SOURCES += core/tcp_ip/lan.c
-SOURCES += core/tcp_ip/1network/ethernet.c
-SOURCES += core/tcp_ip/1network/arp.c
-SOURCES += core/tcp_ip/2internet/ip.c
-SOURCES += core/tcp_ip/2internet/icmp.c
-SOURCES += core/tcp_ip/3transport/udp.c
+# Name for output binary files
+PROJECT = test
 
-# add startup file to build
-SOURCES += ./startup/startup_stm32f103xb.s
-
-# name for output binary files
-PROJECT ?= test
-
-# compiler, objcopy (should be in PATH)
+# Compiler, objcopy (should be in PATH)
 CC = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
 SIZE = arm-none-eabi-size
 DBG = arm-none-eabi-gdb
 
-# path to st-flash (or should be specified in PATH)
-ST_FLASH ?= st-flash
-ST_LINK ?= ST-LINK_CLI
+# Path to st-flash (or should be specified in PATH)
+ST_FLASH = st-flash
+ST_UTIL = st_util
+#ST_LINK = ST-LINK_CLI
 ST_INFO = st-info
-
 OCD = openocd
+
+# List of source files
+SRCS = ./startup/startup_stm32f103xb.s
+SRCS += main.c
+SRCS += cmsis/src/system_stm32f1xx.c
+SRCS += core/enc28j60/enc28j60.c
+SRCS += core/enc28j60/enc28j60_spi.c
+SRCS += core/delay/delay.c
+SRCS += core/buart/buart.c
+SRCS += core/tcp_ip/lan.c
+SRCS += core/tcp_ip/1network/ethernet.c
+SRCS += core/tcp_ip/1network/arp.c
+SRCS += core/tcp_ip/2internet/ip.c
+SRCS += core/tcp_ip/2internet/icmp.c
+SRCS += core/tcp_ip/3transport/udp.c
+
+# CMSIS headers
+INCLUDE_DIRS = -I./cmsis/inc/
+# main header
+INCLUDE_DIRS += -I./core
+# delay header
+INCLUDE_DIRS += -I./core/delay/
+# burat header
+INCLUDE_DIRS += -I./core/buart/
+# enc28j60 headers 
+INCLUDE_DIRS += -I./core/enc28j60/
+# tcp_ip headers 
+INCLUDE_DIRS += -I./core/tcp_ip
+INCLUDE_DIRS += -I./core/tcp_ip/1network
+INCLUDE_DIRS += -I./core/tcp_ip/2internet
+INCLUDE_DIRS += -I./core/tcp_ip/3transport
+INCLUDE_DIRS += -I./core/tcp_ip/4application
 
 # specify compiler flags
 CFLAGS  = -g -O0 -Wall
 CFLAGS += -T ./startup/STM32F103XB_FLASH.ld
 CFLAGS += -mlittle-endian -mthumb -mcpu=cortex-m3 -mthumb-interwork
-CFLAGS += -DSTM32F103xB
-CFLAGS += -Wl,--gc-sections
-CFLAGS += -I.
-CFLAGS += -I ./cmsis/inc/
-# main header
-CFLAGS += -I ./core
-# delay header
-CFLAGS += -I ./core/delay/
-# burat header
-CFLAGS += -I ./core/buart/
-# enc28j60 headers 
-CFLAGS += -I ./core/enc28j60/
-CFLAGS += -I ./core/enc28j60/spi
-# tcp_ip headers 
-CFLAGS += -I ./core/tcp_ip
-CFLAGS += -I ./core/tcp_ip/1network
-CFLAGS += -I ./core/tcp_ip/2internet
-CFLAGS += -I ./core/tcp_ip/3transport
-CFLAGS += -I ./core/tcp_ip/4application
+CFLAGS += -ffunction-sections -fdata-sections
+CFLAGS += -Wl,--gc-sections,--no-warn-rwx-segments
 
+# Preprocessor flags
+CPPFLAGS = -DSTM32F103xB
+CPPFLAGS += $(INCLUDE_DIRS)
 
-OBJS = $(SOURCES:.c=.o)
+# Objects
+OBJS = $(SRCS:.c=.o)
 
 all: $(PROJECT).elf size
 
-# compile
-$(PROJECT).elf: $(SOURCES)
-	$(CC) $(CFLAGS) $^ -o $@
-	$(OBJCOPY) -O ihex $(PROJECT).elf $(PROJECT).hex
-	$(OBJCOPY) -O binary $(PROJECT).elf $(PROJECT).bin
+# Compile
+$(PROJECT).elf: $(SRCS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $^ -o $@
+
+$(PROJECT).hex: $(PROJECT).elf
+	$(OBJCOPY) -O ihex $< $(PROJECT).hex
+
+$(PROJECT).bin: $(PROJECT).elf
+	$(OBJCOPY) -O binary $< $(PROJECT).bin
 
 # remove binary files
 clean:
@@ -79,7 +85,6 @@ burn:
 
 burn_win:
 	$(ST_LINK) -c SWD -P $(PROJECT).hex 0x8000000 -Rst
-
 
 ocd_burn:
 	$(OCD) -f /usr/share/openocd/scripts/interface/stlink-v2.cfg \

@@ -63,7 +63,7 @@ CPPFLAGS += $(INCLUDE_DIRS)
 # Objects
 OBJS = $(SRCS:.c=.o)
 
-all: $(PROJECT).elf size
+all: $(PROJECT).elf $(PROJECT).bin size
 
 # Compile
 $(PROJECT).elf: $(SRCS)

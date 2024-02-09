@@ -1,29 +1,26 @@
-#include "stm32f1xx.h"
-#include "ethernet.h"
 #include "ip.h"
 #include "udp.h"
 #include "buart.h"
 
-void udp_filter(eth_frame_t *frame, uint16_t len)
+void udp_filter(struct eth_frame *frame, uint16_t len)
 {
-    ip_packet_t *ip = (void*)(frame->data);
-    udp_packet_t *udp = (void*)(ip->data);
+    struct ip_packet *ip = (struct ip_packet *)(frame->data);
+    struct udp_packet *udp = (struct udp_packet *)(ip->data);
 
-    if(len >= sizeof(udp_packet_t))
-    {
-        udp_packet(frame, ntohs(udp->len) - sizeof(udp_packet_t));
-    }
+    if (len < sizeof(struct udp_packet))
+        return;
+
+    udp_packet(frame, ntohs(udp->len) - sizeof(struct udp_packet));
 }
 
-void udp_reply(eth_frame_t *frame, uint16_t len)
+void udp_reply(struct eth_frame *frame, uint16_t len)
 {
-    ip_packet_t *ip = (void*)(frame->data);
-    udp_packet_t *udp = (void*)(ip->data);
-    uint16_t temp;
+    struct ip_packet *ip = (struct ip_packet *)(frame->data);
+    struct udp_packet *udp = (struct udp_packet *)(ip->data);
 
-    len += sizeof(udp_packet_t);
+    len += sizeof(struct udp_packet);
 
-    temp = udp->from_port;
+    uint16_t temp = udp->from_port;
     udp->from_port = udp->to_port;
     udp->to_port = temp;
 
@@ -35,26 +32,23 @@ void udp_reply(eth_frame_t *frame, uint16_t len)
     ip_reply(frame, len);
 }
 
-void udp_packet(eth_frame_t *frame, uint16_t len)
+void udp_packet(struct eth_frame *frame, uint16_t len)
 {
-    ip_packet_t *ip = (ip_packet_t*)(frame->data);
-    udp_packet_t *udp = (udp_packet_t*)(ip->data);
+    struct ip_packet *ip = (struct ip_packet *)(frame->data);
+    struct udp_packet *udp = (struct udp_packet *)(ip->data);
     uint8_t *data = udp->data;
     uint8_t count;
 
-    for(uint8_t i = 0; i < len; ++i)
-    {
+    for (uint16_t i = 0; i < len; ++i)
         uart_write_byte(data[i]);
-    }
+    
     uart_write_byte('\r');
 
     count = uart_rx_count();
-    if(count)
-    {
-        for(uint8_t i = 0; i < count; ++i)
-        {
+    if (count != 0) {
+        for (uint16_t i = 0; i < count; ++i)
         	data[i] = uart_read();
-        }
         udp_reply(frame, count);
 	}
 }
+

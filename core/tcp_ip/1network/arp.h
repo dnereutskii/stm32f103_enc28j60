@@ -1,9 +1,19 @@
 #ifndef ARP_H
 #define ARP_H
 
+#include <stdint.h>
+
+/**
+ * @brief 
+ *
+ */
 #define ARP_HW_TYPE_ETH     htons(0x0001)
 #define ARP_PROTO_TYPE_IP   htons(0x0800)
 
+/**
+ * @brief ARP massage types.
+ *
+ */
 #define ARP_TYPE_REQUEST    htons(1)
 #define ARP_TYPE_RESPONSE   htons(2)
 
@@ -26,7 +36,7 @@ typedef struct arp_message {
 #pragma pack(pop)
 
 /**
- * @brief ARP message analyser.
+ * @brief ARP message analyzer.
  * 
  * The function checkout of datalink and protocol types, forms a response 
  * to ARP-request.
@@ -34,6 +44,6 @@ typedef struct arp_message {
  * @param frame Ethernet frame
  * @param len   ARP-message length
  */
-void arp_filter(eth_frame_t *frame, uint16_t len);
+void arp_filter(struct eth_frame *frame, uint16_t len);
 
 #endif /*ARP_H*/

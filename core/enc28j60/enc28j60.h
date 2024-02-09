@@ -1,6 +1,8 @@
 #ifndef ENC28J60_H
 #define ENC28J60_H
 
+#include <stdint.h>
+
 #define ENC28J60_BUFSIZE	0x2000
 #define ENC28J60_RXSIZE		0x1A00
 #define ENC28J60_BUFEND		(ENC28J60_BUFSIZE - 1)

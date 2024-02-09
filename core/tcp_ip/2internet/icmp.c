@@ -1,19 +1,18 @@
-#include "stm32f1xx.h"
 #include "ethernet.h"
 #include "ip.h"
 #include "icmp.h"
 
-
-void icmp_filter(eth_frame_t *frame, uint16_t len)
+void icmp_filter(struct eth_frame *frame, uint16_t len)
 {
-    ip_packet_t *packet = (ip_packet_t*)frame->data;
-    icmp_echo_packet_t *icmp = (icmp_echo_packet_t*)packet->data;
+    struct ip_packet *packet = (struct ip_packet *)frame->data;
+    struct icmp_echo_packet *icmp = (struct icmp_echo_packet *)packet->data;
 
-    if(len < sizeof(icmp_echo_packet_t)) return;
-    if(icmp->type == ICMP_TYPE_ECHO_RQ)
-    {
-        icmp->type = ICMP_TYPE_ECHO_RPLY;
+    if (len < sizeof(struct icmp_echo_packet))
+        return;
+    if (icmp->type == ICMP_TYPE_ECHO_REQUEST) {
+        icmp->type = ICMP_TYPE_ECHO_REPLY;
         icmp->cksum += 8; /* Update cksum */
         ip_reply(frame, len);
     }
 }
+

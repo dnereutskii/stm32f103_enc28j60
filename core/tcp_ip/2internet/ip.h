@@ -1,12 +1,23 @@
 #ifndef IP_H
 #define IP_H
 
+#include <stdint.h>
+#include "ethernet.h"
+
+/**
+ * @brief Above IP protocol.
+ *
+ */
 #define IP_PROTOCOL_ICMP    1
 #define IP_PROTOCOL_TCP     6
 #define IP_PROTOCOL_UDP     17
 
+/**
+ * @brief IP header.
+ *
+ */
 #pragma pack(push, 1)
-typedef struct ip_packet {
+struct ip_packet {
     uint8_t ver_head_len;           /*!< Version (= 4) and Internet header length (= 5)*/
     uint8_t tos;                    /*!< Type of service */
     uint16_t total_len;             /*!< Total length of datagram (<= 576 octets) */
@@ -18,9 +29,13 @@ typedef struct ip_packet {
     uint32_t from_addr;             /*!< Source IP-address */
     uint32_t to_addr;               /*!< Destination IP-address */
     uint8_t data[];                 /*!< Service Data Unit */
-} ip_packet_t;
+};
 #pragma pack(pop)
 
+/**
+ * @brief Host IP address.
+ *
+ */
 extern uint32_t ip_addr;    /*!< IP-address of device */
 
 /**
@@ -29,10 +44,10 @@ extern uint32_t ip_addr;    /*!< IP-address of device */
  * @param frame Ethernet frame pointer
  * @param len   Data length (Service Data Unit)
  */
-void ip_reply(eth_frame_t *frame, uint16_t len);
+void ip_reply(struct eth_frame *frame, uint16_t len);
 
 /**
- * @brief 
+ * @brief Calcuates checksum. 
  * 
  * @param sum 
  * @param buf 
@@ -42,7 +57,7 @@ void ip_reply(eth_frame_t *frame, uint16_t len);
 uint16_t ip_cksum(uint32_t sum, uint8_t *buf, uint16_t len);
 
 /**
- * @brief IP-packet analyser.
+ * @brief IP-packet analyzer.
  * 
  * The function checks out ip-address and header version. Then it looks at 
  * the protocol field for further sending of the frame  to protocols 
@@ -51,6 +66,7 @@ uint16_t ip_cksum(uint32_t sum, uint8_t *buf, uint16_t len);
  * @param frame Ethernet frame pointer
  * @param len   IP-packet length
  */
-void ip_filter(eth_frame_t *frame, uint16_t len);
+void ip_filter(struct eth_frame *frame, uint16_t len);
 
-#endif /*IP_H*/
+#endif /* IP_H */
+

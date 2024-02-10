@@ -52,3 +52,20 @@ void udp_packet(struct eth_frame *frame, uint16_t len)
 	}
 }
 
+uint8_t udp_send(struct eth_frame *frame, uint16_t len)
+{
+	struct ip_packet *ip = (struct ip_packet *)(frame->data);
+	struct udp_packet *udp = (struct udp_packet *)(ip->data);
+
+	len += sizeof(struct udp_packet);
+
+	ip->protocol = IP_PROTOCOL_UDP;
+	ip->from_addr = ip_addr;
+
+	udp->len = htons(len);
+    udp->cksum = 0;
+	udp->cksum = ip_cksum(len + IP_PROTOCOL_UDP, (uint8_t*)udp-8, len+8);
+
+    return ip_send(frame, len);
+}
+

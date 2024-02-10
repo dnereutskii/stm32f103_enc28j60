@@ -31,6 +31,7 @@ SRCS += core/tcp_ip/1network/arp.c
 SRCS += core/tcp_ip/2internet/ip.c
 SRCS += core/tcp_ip/2internet/icmp.c
 SRCS += core/tcp_ip/3transport/udp.c
+SRCS += core/tcp_ip/4application/ntp.c
 
 # CMSIS headers
 INCLUDE_DIRS = -I./cmsis/inc/

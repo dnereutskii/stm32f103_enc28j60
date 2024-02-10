@@ -13,6 +13,12 @@ void eth_reply(struct eth_frame *frame, uint16_t len)
 	enc28j60_send_packet((uint8_t *)frame, len + sizeof(struct eth_frame));
 }
 
+void eth_send(struct eth_frame *frame, uint16_t len)
+{
+	memcpy(frame->from_addr, mac_addr, MAC_ADDR_LEN);
+	enc28j60_send_packet((uint8_t *)frame, len + sizeof(struct eth_frame));
+}
+
 
 void eth_filter(struct eth_frame *frame, uint16_t len)
 {
@@ -28,3 +34,4 @@ void eth_filter(struct eth_frame *frame, uint16_t len)
             break;
     }
 }
+

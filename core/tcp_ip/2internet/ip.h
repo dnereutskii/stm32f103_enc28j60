@@ -20,9 +20,9 @@
 struct ip_packet {
     uint8_t ver_head_len;           /*!< Version (= 4) and Internet header length (= 5)*/
     uint8_t tos;                    /*!< Type of service */
-    uint16_t total_len;             /*!< Total length of datagram (<= 576 octets) */
+    uint16_t total_len;             /*!< Total packet length */
     uint16_t fragment_id;           /*!< Fragment ID */
-    uint16_t flags_framgent_offset; /*!< Fragment flags and Fragment offset */
+    uint16_t flags_framgent_offset; /*!< Flags and Fragment offset */
     uint8_t ttl;                    /*!< Time to live */
     uint8_t protocol;               /*!< Next level protocol */
     uint16_t cksum;                 /*!< Header checksum */
@@ -37,6 +37,8 @@ struct ip_packet {
  *
  */
 extern uint32_t ip_addr;    /*!< IP-address of device */
+extern uint32_t ip_mask;
+extern uint32_t ip_gateway;
 
 /**
  * @brief IP-packet incapsulation of data for replying.
@@ -67,6 +69,14 @@ uint16_t ip_cksum(uint32_t sum, uint8_t *buf, uint16_t len);
  * @param len   IP-packet length
  */
 void ip_filter(struct eth_frame *frame, uint16_t len);
+
+/**
+ * @brief Sends IP packet.
+ * 
+ * @note Must be set:  ip.dst, ip.proto
+ * @return IP packet payload length
+ */
+uint8_t ip_send(struct eth_frame *frame, uint16_t len);
 
 #endif /* IP_H */
 

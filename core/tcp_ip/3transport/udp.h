@@ -42,4 +42,14 @@ void udp_reply(struct eth_frame *frame, uint16_t len);
  */
 void udp_packet(struct eth_frame *frame, uint16_t len);
 
+/**
+ * @brief Sends UDP packet.
+ *
+ * @notes Fields must be set: ip.dst, udp.src_port, udp.dst_port.
+ *
+ * @param frame Ethernet frame struct pointer.
+ * @param len UDP data payload length.
+ */
+uint8_t udp_send(struct eth_frame *frame, uint16_t len);
+
 #endif /*UDP_H*/

@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <string.h>
 #include "arp.h"
 #include "ip.h"
 #include "icmp.h"
@@ -87,7 +89,7 @@ uint8_t ip_send(struct eth_frame *frame, uint16_t len)
         return 0;
 
     // send packet
-    len += sizeof(ip_packet_t);
+    len += sizeof(struct ip_packet);
 
     memcpy(frame->to_addr, mac_addr_to, MAC_ADDR_LEN);
     frame->type = ETH_TYPE_IP;
@@ -100,7 +102,7 @@ uint8_t ip_send(struct eth_frame *frame, uint16_t len)
     ip->ttl = IP_PACKET_TTL;
     ip->cksum = 0;
     ip->from_addr = ip_addr;
-    ip->cksum = ip_cksum(0, (void*)ip, sizeof(ip_packet_t));
+    ip->cksum = ip_cksum(0, (uint8_t *)ip, sizeof(struct ip_packet));
     
     eth_send(frame, len);
     return 1;

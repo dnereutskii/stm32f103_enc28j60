@@ -1,3 +1,4 @@
+#include <string.h>
 #include "ip.h"
 #include "udp.h"
 #include "ntp.h"
